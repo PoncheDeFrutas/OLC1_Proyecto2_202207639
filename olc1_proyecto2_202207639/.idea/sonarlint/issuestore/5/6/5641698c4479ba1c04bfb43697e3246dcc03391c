@@ -1,0 +1,16 @@
+
+Atypescript:S1451"&Add or update the header of this file.8А╦дны1
+Ztypescript:S3533"7Use a standard "import" statement instead of "require".(▌╥▐┬8Г╦дны1
+5typescript:S1438"Missing semicolon.(▌╥▐┬8Й╦дны1
+Шtypescript:S117"vRename this local variable "test_text" to match the regular expression ^[_$A-Za-z][$A-Za-z0-9]*$|^[_$A-Z][_$A-Z0-9]+$.(╦нцо8О╦дны1
+:typescript:S1438"Missing semicolon.(Х╤йс¤    8П╦дны1
+:typescript:S1438"Missing semicolon.(╘Зът∙    8Ч╦дны1
+?typescript:S106"Unexpected console statement.(│╚ща8Ю╦дны1
+5typescript:S1438"Missing semicolon.(│╚ща8в╦дны1
+?typescript:S106"Unexpected console statement.(в├╗√8ж╦дны1
+@typescript:S1441"Strings must use singlequote.(в├╗√8м╦дны1
+5typescript:S1438"Missing semicolon.(в├╗√8░╦дны1
+?typescript:S106"Unexpected console statement.(╟▀│й8│╦дны1
+5typescript:S1438"Missing semicolon.(╟▀│й8╕╦дны1
+Ptypescript:S113".Newline required at end of file but not found.(МШуС8─╦дны1
+5typescript:S1438"Missing semicolon.(МШуС8╞╦дны1
