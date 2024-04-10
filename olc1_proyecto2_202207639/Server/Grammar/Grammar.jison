@@ -1,9 +1,13 @@
 /*-----------------------------------------------IMPORTS AND JS CODE--------------------------------------------------*/
 %{
     const { Arithmetic } = require('../js/Expression/Arithmetic');
+    const { Relational } = require('../js/Expression/Relational');
+    const { Logical } = require('../js/Expression/Logical');
     const { Primitive } = require('../js/Expression/Primitive');
-    const { ArithmeticOp, Result, dataType } = require('../js/Expression/Result');
+    const { ArithmeticOp, RelationalOp, LogicalOp, Result, dataType } = require('../js/Expression/Result');
     const { Cout } = require('../js/Instruction/Cout');
+    const { Block } = require('../js/Instruction/Block');
+    const { FN_IF } = require('../js/Instruction/Control/IF');
     const { AST } = require('../js/AST');
 %}
 /*------------------------------------------------LEXICAL ANALYZER----------------------------------------------------*/
@@ -16,7 +20,7 @@
 /*Whitespaces and Comments*/
 \s+
 \/\*([^*]|\*+[^*/])*\*+\/   /*Ignore Comments*/
-"//".*[\n]                  /*Ignore Comments*/
+"/""/".*[\n]                /*Ignore Comments*/
 [ \t\r\n]+                  /*Ignore Whitespaces*/
 
 [0-9]+("."[0-9]+)\b         {return 'DOUBLE';}
@@ -29,6 +33,9 @@
 "<<"    {return 'INSERTION';}
 "endl"  {return 'ENDL';}
 
+/*Function IF*/
+"if"    {return 'IF';}
+"else"  {return 'ELSE';}
 
 /*Incremental and Decremental*/
 "++"    {return 'INC';}
@@ -112,6 +119,7 @@ statements
 
 statement
     : fn_count                                              { $$ = $1; }
+    | fn_if                                                 { $$ = $1; }
     ;
 
 fn_count
@@ -125,7 +133,10 @@ end_count
 
 expression
     : operations                    { $$ = $1; }
+    | relational                    { $$ = $1; }
+    | logical                       { $$ = $1; }
     | data_type                     { $$ = $1; }
+    | LPAREN expression RPAREN      { $$ = $2; }
     ;
 
 operations
@@ -138,6 +149,21 @@ operations
     | POW LPAREN expression COMMA expression RPAREN     { $$ = new Arithmetic($3, $5, ArithmeticOp.POW, @1.first_line, @1.first_column); }
     ;
 
+relational
+    : expression EQ expression      { $$ = new Relational($1, $3, RelationalOp.EQ, @2.first_line, @2.first_column); }
+    | expression NEQ expression     { $$ = new Relational($1, $3, RelationalOp.NEQ, @2.first_line, @2.first_column); }
+    | expression LT expression      { $$ = new Relational($1, $3, RelationalOp.LT, @2.first_line, @2.first_column); }
+    | expression LEQ expression     { $$ = new Relational($1, $3, RelationalOp.LEQ, @2.first_line, @2.first_column); }
+    | expression GT expression      { $$ = new Relational($1, $3, RelationalOp.GT, @2.first_line, @2.first_column); }
+    | expression GEQ expression     { $$ = new Relational($1, $3, RelationalOp.GEQ, @2.first_line, @2.first_column); }
+    ;
+
+logical
+    : expression AND expression     { $$ = new Logical($1, $3, LogicalOp.AND, @2.first_line, @2.first_column); }
+    | expression OR expression      { $$ = new Logical($1, $3, LogicalOp.OR, @2.first_line, @2.first_column); }
+    | NOT expression                { $$ = new Logical($2, $2, LogicalOp.NOT, @1.first_line, @1.first_column); }
+    ;
+
 data_type
     : ID                            { $$ = new Primitive($1, dataType.ID ,@1.first_line, @1.first_column); }
     | NUMBER                        { $$ = new Primitive($1, dataType.NUMBER ,@1.first_line, @1.first_column); }
@@ -145,4 +171,19 @@ data_type
     | BOOL                          { $$ = new Primitive($1, dataType.BOOL ,@1.first_line, @1.first_column); }
     | CHAR                          { $$ = new Primitive($1, dataType.CHAR ,@1.first_line, @1.first_column); }
     | STRING                        { $$ = new Primitive($1, dataType.STRING ,@1.first_line, @1.first_column); }
+    ;
+
+fn_if
+    : IF LPAREN expression RPAREN block fn_else            { $$ = new FN_IF($3, $5, $6, @1.first_line, @1.first_column); }
+    ;
+
+fn_else
+    : ELSE block                                            { $$ = $2; }
+    | ELSE fn_if                                            { $$ = $2; }
+    |                                                       { $$ = null; }
+    ;
+
+block
+    : LBRACE statements RBRACE      { $$ = new Block($2, @1.first_line, @1.first_column); }
+    | LBRACE RBRACE                 { $$ = new Block([], @1.first_line, @1.first_column); }
     ;

@@ -98,6 +98,10 @@ class Arithmetic extends Expression_1.Expression {
             case Result_1.ArithmeticOp.POW:
                 dominantType = POW[leftResult.type][rightResult.type];
                 switch (dominantType) {
+                    case Result_1.dataType.NUMBER:
+                        convertType(leftResult);
+                        convertType(rightResult);
+                        return { value: Math.pow(leftResult.value, rightResult.value), type: dominantType };
                     case Result_1.dataType.DOUBLE:
                         convertType(leftResult);
                         convertType(rightResult);
