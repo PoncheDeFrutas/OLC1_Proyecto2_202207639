@@ -1,18 +1,22 @@
-import { Expression } from "./Expression/Expression";
-import { Instruction } from "./Instruction/Instruction";
+import { env } from "process";
+import { Expression } from "./Abstract/Expression";
+import { Instruction } from "./Abstract/Instruction";
+import {Environment} from "./Symbol/Environment";
 
 export class AST {
     public instructions: Instruction[]
     public tConsole: string[]
+    public global: Environment
 
     constructor(instructions: Instruction[]) {
         this.instructions = instructions
         this.tConsole = []
+        this.global = new Environment(null)
     }
 
     public Execute(){
         this.instructions.forEach(instruction => {
-            instruction.interpreter(this.tConsole)
+            instruction.interpreter(this.global, this.tConsole)
         });
     }
 

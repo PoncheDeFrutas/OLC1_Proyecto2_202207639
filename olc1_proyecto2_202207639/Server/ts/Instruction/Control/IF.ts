@@ -1,7 +1,8 @@
-import { Expression } from "../../Expression/Expression";
-import { dataType } from "../../Expression/Result";
-import { Instruction } from "../Instruction";
+import { Expression } from "../../Abstract/Expression";
+import { dataType } from "../../Abstract/Result";
+import { Instruction } from "../../Abstract/Instruction";
 import { Block } from "../Block";
+import { Environment} from "../../Symbol/Environment";
 
 export class FN_IF extends Instruction {
     condition: Expression
@@ -15,15 +16,15 @@ export class FN_IF extends Instruction {
         this.blockElse = blockElse
     }
 
-    public interpreter(tConsole: string[]): null {
-        const condition = this.condition.interpreter()
+    public interpreter(environment: Environment, tConsole: string[]): null {
+        const condition = this.condition.interpreter(environment)
         if (condition.type != dataType.BOOL) {
             throw Error("Error: Type mismatch")
         }
         if (condition.value) {
-            this.blockIf.interpreter(tConsole)
+            this.blockIf.interpreter(environment, tConsole)
         } else if(this.blockElse != null){
-            this.blockElse.interpreter(tConsole)
+            this.blockElse.interpreter(environment, tConsole)
         }
         return null
     }

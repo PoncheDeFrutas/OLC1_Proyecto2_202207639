@@ -3,11 +3,16 @@
     const { Arithmetic } = require('../js/Expression/Arithmetic');
     const { Relational } = require('../js/Expression/Relational');
     const { Logical } = require('../js/Expression/Logical');
+    const { Ternary } = require('../js/Expression/Ternary');
     const { Primitive } = require('../js/Expression/Primitive');
+    const { Casting } = require('../js/Expression/Casting');
     const { ArithmeticOp, RelationalOp, LogicalOp, Result, dataType } = require('../js/Expression/Result');
     const { Cout } = require('../js/Instruction/Cout');
     const { Block } = require('../js/Instruction/Block');
+    const { Declaration } = require('../js/Instruction/Declaration');
+    const { IdValue } = require('../js/Instruction/IdValue');
     const { FN_IF } = require('../js/Instruction/Control/IF');
+    const {IncDecFunction} = require('../js/Instruction/IncDecFunction');
     const { AST } = require('../js/AST');
 %}
 /*------------------------------------------------LEXICAL ANALYZER----------------------------------------------------*/
@@ -93,6 +98,8 @@
 /lex
 
 /*Precedence------------*/
+%right 'TYPE'
+%right 'TERNARY'
 %left 'OR'
 %left 'AND'
 %right 'NOT'
@@ -120,7 +127,29 @@ statements
 statement
     : fn_count                                              { $$ = $1; }
     | fn_if                                                 { $$ = $1; }
+    | var_declaration                                       { $$ = $1; }
+    | increment_decrement                                   { $$ = $1; }
     ;
+
+var_declaration
+    : TYPE var_list end_declaration                         { $$ = new Declaration($1, $2, $3, @1.first_line, @1.first_column);}
+    ;
+
+var_list
+    : var_list COMMA ID                                     { $1.push($3); $$ = $1; }
+    | ID                                                    { $$ = [$1]; }
+    ;
+
+end_declaration
+    : SEMICOLON                                             { $$ = null; }
+    | ASSIGN expression SEMICOLON                           { $$ = $2; }
+    ;
+
+increment_decrement
+    : ID INC SEMICOLON                                      { $$ = new IncDecFunction($1, true, @2.first_line, @2.first_column); }
+    | ID DEC SEMICOLON                                      { $$ = new IncDecFunction($1, false, @2.first_line, @2.first_column); }
+    ;
+
 
 fn_count
     : COUT INSERTION expression end_count                   { $$ = new Cout($3, $4, @1.first_line, @1.first_column);}
@@ -135,6 +164,8 @@ expression
     : operations                    { $$ = $1; }
     | relational                    { $$ = $1; }
     | logical                       { $$ = $1; }
+    | ternary                       { $$ = $1; }
+    | casting                       { $$ = $1; }
     | data_type                     { $$ = $1; }
     | LPAREN expression RPAREN      { $$ = $2; }
     ;
@@ -164,8 +195,16 @@ logical
     | NOT expression                { $$ = new Logical($2, $2, LogicalOp.NOT, @1.first_line, @1.first_column); }
     ;
 
+ternary
+    : expression TERNARY expression COLON expression    { $$ = new Ternary($1, $3, $5, @2.first_line, @2.first_column); }
+    ;
+
+casting
+    : LPAREN TYPE RPAREN expression {$$ = new Casting($2, $4, @1.first_line, @1.first_column);}
+    ;
+
 data_type
-    : ID                            { $$ = new Primitive($1, dataType.ID ,@1.first_line, @1.first_column); }
+    : ID                            { $$ = new IdValue($1 ,@1.first_line, @1.first_column); }
     | NUMBER                        { $$ = new Primitive($1, dataType.NUMBER ,@1.first_line, @1.first_column); }
     | DOUBLE                        { $$ = new Primitive($1, dataType.DOUBLE ,@1.first_line, @1.first_column); }
     | BOOL                          { $$ = new Primitive($1, dataType.BOOL ,@1.first_line, @1.first_column); }

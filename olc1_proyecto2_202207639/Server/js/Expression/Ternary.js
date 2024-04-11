@@ -1,27 +1,26 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FN_IF = void 0;
-const Result_1 = require("../../Abstract/Result");
-const Instruction_1 = require("../../Abstract/Instruction");
-class FN_IF extends Instruction_1.Instruction {
+exports.Ternary = void 0;
+const Expression_1 = require("../Abstract/Expression");
+const Result_1 = require("../Abstract/Result");
+class Ternary extends Expression_1.Expression {
     constructor(condition, blockIf, blockElse, line, column) {
         super(line, column);
         this.condition = condition;
         this.blockIf = blockIf;
         this.blockElse = blockElse;
     }
-    interpreter(environment, tConsole) {
+    interpreter(environment) {
         const condition = this.condition.interpreter(environment);
         if (condition.type != Result_1.dataType.BOOL) {
             throw Error("Error: Type mismatch");
         }
         if (condition.value) {
-            this.blockIf.interpreter(environment, tConsole);
+            return this.blockIf.interpreter(environment);
         }
-        else if (this.blockElse != null) {
-            this.blockElse.interpreter(environment, tConsole);
+        else {
+            return this.blockElse.interpreter(environment);
         }
-        return null;
     }
 }
-exports.FN_IF = FN_IF;
+exports.Ternary = Ternary;

@@ -1,5 +1,7 @@
-import {Expression} from "./Expression";
-import {dataType, RelationalOp, Result} from "./Result";
+import { env } from "process";
+import { Environment } from "../Symbol/Environment";
+import {Expression} from "../Abstract/Expression";
+import {dataType, RelationalOp, Result} from "../Abstract/Result";
 
 export class Relational extends Expression {
     public left: Expression;
@@ -13,9 +15,9 @@ export class Relational extends Expression {
         this.op = op;
     }
 
-    public interpreter(): Result{
-        const leftResult = this.left.interpreter();
-        const rightResult = this.right.interpreter();
+    public interpreter(environment: Environment): Result{
+        const leftResult = this.left.interpreter(environment);
+        const rightResult = this.right.interpreter(environment);
 
         if (leftResult.type == dataType.NULL || rightResult.type == dataType.NULL){
             throw Error ("Error: type null");

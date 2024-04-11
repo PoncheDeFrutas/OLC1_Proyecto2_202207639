@@ -1,4 +1,5 @@
-import { Instruction } from "./Instruction";
+import { Environment } from "../Symbol/Environment";
+import { Instruction } from "../Abstract/Instruction";
 
 export class Block extends Instruction {
     instructions: Instruction[]
@@ -8,10 +9,18 @@ export class Block extends Instruction {
         this.instructions = instructions
     }
 
-    public interpreter(tConsole: string[]): null {
+    public interpreter(environment: Environment, tConsole: string[]) {
+        const newEnv = new Environment(environment)
+
         this.instructions.forEach(instruction => {
-            instruction.interpreter(tConsole)
+            try{
+                const element = instruction.interpreter(newEnv, tConsole)
+                if (element != null || element != undefined){
+                    return element;
+                }
+            } catch (error){
+                console.log(error)
+            }
         });
-        return null;
     }
 }

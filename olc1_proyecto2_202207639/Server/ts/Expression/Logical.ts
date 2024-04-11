@@ -1,5 +1,7 @@
-import { Expression } from "./Expression";
-import { LogicalOp, dataType, Result } from "./Result";
+import { env } from "process";
+import { Environment } from "../Symbol/Environment";
+import { Expression } from "../Abstract/Expression";
+import { LogicalOp, dataType, Result } from "../Abstract/Result";
 
 export class Logical extends Expression{
     public left: Expression;
@@ -13,9 +15,9 @@ export class Logical extends Expression{
         this.op = op;
     }
 
-    public interpreter(): Result {
-        const leftResult = this.left.interpreter();
-        const rightResult =  this.right.interpreter();
+    public interpreter(environment: Environment): Result {
+        const leftResult = this.left.interpreter(environment);
+        const rightResult =  this.right.interpreter(environment);
 
         switch (this.op) {
             case LogicalOp.OR:
