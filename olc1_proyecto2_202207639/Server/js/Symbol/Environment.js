@@ -28,6 +28,7 @@ class Environment {
         throw Error("Variable don't exist");
     }
     saveFunction(id, func) {
+        // TODO arreglar esta madre
         this.functions.set(id, func);
     }
     getVariable(id) {

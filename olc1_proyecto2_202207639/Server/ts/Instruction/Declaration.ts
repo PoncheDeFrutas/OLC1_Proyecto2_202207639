@@ -1,8 +1,7 @@
-import { env } from "process";
-import { Instruction } from "../Abstract/Instruction";
-import { Environment } from "../Symbol/Environment";
-import { Expression } from "../Abstract/Expression";
-import { dataType } from "../Abstract/Result";
+import {Instruction} from "../Abstract/Instruction";
+import {Environment} from "../Symbol/Environment";
+import {Expression} from "../Abstract/Expression";
+import {dataType} from "../Abstract/Result";
 
 export class Declaration extends Instruction {
 

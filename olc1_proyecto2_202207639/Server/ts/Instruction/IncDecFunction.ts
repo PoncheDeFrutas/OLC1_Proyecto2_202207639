@@ -1,6 +1,7 @@
 import { env } from "process";
 import { Instruction } from "../Abstract/Instruction";
 import { Environment } from "../Symbol/Environment";
+import { dataType } from "../Abstract/Result";
 
 export class IncDecFunction extends Instruction {
 
@@ -20,14 +21,14 @@ export class IncDecFunction extends Instruction {
                 throw new Error(`Variable ${this.id} doesn't exist`);
             }
 
-            if (typeof value.value != "number") {
+            if (value.type == dataType.NUMBER || value.type == dataType.DOUBLE) {
+                if (this.IncDec) {
+                    environment.editVariable(this.id, value.value + 1, value.type);
+                } else {
+                    environment.editVariable(this.id, value.value - 1, value.type);
+                }
+            } else{
                 throw new Error(`Type Error: ${value.type} is not assignable to number`)
-            }
-
-            if (this.IncDec) {
-                environment.editVariable(this.id, value.value + 1, value.type);
-            } else {
-                environment.editVariable(this.id, value.value - 1, value.type);
             }
             return null;
         }

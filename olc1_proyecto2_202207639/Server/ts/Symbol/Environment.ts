@@ -34,6 +34,7 @@ export class Environment{
     }
 
     public saveFunction(id: string, func: Function){
+        // TODO arreglar esta madre
         this.functions.set(id, func);
     }
 

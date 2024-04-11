@@ -6,6 +6,8 @@
     const { Ternary } = require('../js/Expression/Ternary');
     const { Primitive } = require('../js/Expression/Primitive');
     const { Casting } = require('../js/Expression/Casting');
+    const { toLowUp } = require('../js/Expression/toLowUp');
+    const { Round } = require('../js/Expression/Round');
     const { ArithmeticOp, RelationalOp, LogicalOp, Result, dataType } = require('../js/Expression/Result');
     const { Cout } = require('../js/Instruction/Cout');
     const { Block } = require('../js/Instruction/Block');
@@ -41,6 +43,13 @@
 /*Function IF*/
 "if"    {return 'IF';}
 "else"  {return 'ELSE';}
+
+/*To Low Up*/
+"tolower" {return 'TOLOWER';}
+"toupper" {return 'TOUPPER';}
+
+/*Round */
+"round"   {return 'ROUND';}
 
 /*Incremental and Decremental*/
 "++"    {return 'INC';}
@@ -166,6 +175,8 @@ expression
     | logical                       { $$ = $1; }
     | ternary                       { $$ = $1; }
     | casting                       { $$ = $1; }
+    | toLowUp                       { $$ = $1; }
+    | round                         { $$ = $1; }
     | data_type                     { $$ = $1; }
     | LPAREN expression RPAREN      { $$ = $2; }
     ;
@@ -201,6 +212,15 @@ ternary
 
 casting
     : LPAREN TYPE RPAREN expression {$$ = new Casting($2, $4, @1.first_line, @1.first_column);}
+    ;
+
+toLowUp
+    : TOLOWER LPAREN expression RPAREN {$$ = new toLowUp($3, true, @1.first_line, @1.first_column);}
+    | TOUPPER LPAREN expression RPAREN {$$ = new toLowUp($3, false, @1.first_line, @1.first_column);}
+    ;
+
+round
+    : ROUND LPAREN expression RPAREN   {$$ = new Round($3, @1.first_line, @1.first_column);}
     ;
 
 data_type
