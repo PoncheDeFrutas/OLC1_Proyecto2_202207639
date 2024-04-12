@@ -1,7 +1,7 @@
 import { env } from "process";
 import { Expression } from "./Abstract/Expression";
 import { Instruction } from "./Abstract/Instruction";
-import {Environment} from "./Symbol/Environment";
+import { Environment } from "./Symbol/Environment";
 
 export class AST {
     public instructions: Instruction[]
@@ -25,6 +25,6 @@ export class AST {
         for (let index = 0; index < this.tConsole.length; index++) {
             exit += this.tConsole[index].toString();
         }
-        return exit
+        return exit.toString();
     }
 }

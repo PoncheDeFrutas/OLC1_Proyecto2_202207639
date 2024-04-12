@@ -16,10 +16,10 @@ class FN_IF extends Instruction_1.Instruction {
             throw Error("Error: Type mismatch");
         }
         if (condition.value) {
-            this.blockIf.interpreter(environment, tConsole);
+            return this.blockIf.interpreter(environment, tConsole);
         }
         else if (this.blockElse != null) {
-            this.blockElse.interpreter(environment, tConsole);
+            return this.blockElse.interpreter(environment, tConsole);
         }
         return null;
     }

@@ -12,7 +12,6 @@ class Declaration extends Instruction_1.Instruction {
     }
     interpreter(environment, tConsole) {
         let dominantType;
-        let auxiliaryType = Result_1.dataType.NULL;
         let defaultVal;
         switch (this.type) {
             case "int":
@@ -21,7 +20,6 @@ class Declaration extends Instruction_1.Instruction {
                 break;
             case "double":
                 dominantType = Result_1.dataType.DOUBLE;
-                auxiliaryType = Result_1.dataType.NUMBER;
                 defaultVal = Number(0.0);
                 break;
             case "bool":
@@ -41,7 +39,7 @@ class Declaration extends Instruction_1.Instruction {
         }
         if (this.value != null) {
             const val = this.value.interpreter(environment);
-            if (dominantType != val.type && auxiliaryType != val.type) {
+            if (dominantType != val.type) {
                 throw new Error(`Type Error: ${val.type} is not assignable to ${dominantType}`);
             }
             this.id.forEach(id => {

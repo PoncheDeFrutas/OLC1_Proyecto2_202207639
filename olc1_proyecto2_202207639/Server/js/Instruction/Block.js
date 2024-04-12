@@ -10,7 +10,7 @@ class Block extends Instruction_1.Instruction {
     }
     interpreter(environment, tConsole) {
         const newEnv = new Environment_1.Environment(environment);
-        this.instructions.forEach(instruction => {
+        for (const instruction of this.instructions) {
             try {
                 const element = instruction.interpreter(newEnv, tConsole);
                 if (element != null || element != undefined) {
@@ -20,7 +20,7 @@ class Block extends Instruction_1.Instruction {
             catch (error) {
                 console.log(error);
             }
-        });
+        }
     }
 }
 exports.Block = Block;

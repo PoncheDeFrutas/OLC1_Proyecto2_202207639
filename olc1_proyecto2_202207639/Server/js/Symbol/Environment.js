@@ -11,8 +11,7 @@ class Environment {
     save(id, value, type) {
         let env = this;
         if (env.variables.has(id)) {
-            env.variables.set(id, new Symbol_1.Symbol(id, type, value));
-            return;
+            throw Error("Variable already exist");
         }
         this.variables.set(id, new Symbol_1.Symbol(id, type, value));
     }

@@ -14,7 +14,13 @@
     const { Declaration } = require('../js/Instruction/Declaration');
     const { IdValue } = require('../js/Instruction/IdValue');
     const { FN_IF } = require('../js/Instruction/Control/IF');
-    const {IncDecFunction} = require('../js/Instruction/IncDecFunction');
+    const { While } = require('../js/Instruction/While');
+    const { DoWhile } = require('../js/Instruction/DoWhile');
+    const { Break } = require('../js/Instruction/Break');
+    const { Continue } = require('../js/Instruction/Continue');
+    const { Return } = require('../js/Instruction/Return');
+    const { IncDecFunction } = require('../js/Instruction/IncDecFunction');
+    const { newValue } = require('../js/Instruction/newValue');
     const { AST } = require('../js/AST');
 %}
 /*------------------------------------------------LEXICAL ANALYZER----------------------------------------------------*/
@@ -50,6 +56,15 @@
 
 /*Round */
 "round"   {return 'ROUND';}
+
+/*While*/
+"do"      {return 'DO';}
+"while"   {return 'WHILE';}
+
+/*Transfer Sentences*/
+"return" {return 'RETURN';}
+"break"  {return 'BREAK';}
+"continue" {return 'CONTINUE';}
 
 /*Incremental and Decremental*/
 "++"    {return 'INC';}
@@ -138,6 +153,10 @@ statement
     | fn_if                                                 { $$ = $1; }
     | var_declaration                                       { $$ = $1; }
     | increment_decrement                                   { $$ = $1; }
+    | var_edition                                           { $$ = $1; }
+    | fn_while                                              { $$ = $1; }
+    | fn_DoWhile                                            { $$ = $1; }
+    | transfer_sentence                                     { $$ = $1; }
     ;
 
 var_declaration
@@ -157,6 +176,24 @@ end_declaration
 increment_decrement
     : ID INC SEMICOLON                                      { $$ = new IncDecFunction($1, true, @2.first_line, @2.first_column); }
     | ID DEC SEMICOLON                                      { $$ = new IncDecFunction($1, false, @2.first_line, @2.first_column); }
+    ;
+
+var_edition
+    : ID ASSIGN expression SEMICOLON                        { $$ = new newValue($1, $3, @2.first_line, @2.first_column); }
+    ;
+
+fn_while
+    : WHILE LPAREN expression RPAREN block                  { $$ = new While($3, $5, @1.first_line, @1.first_column); }
+    ;
+
+fn_DoWhile
+    : DO block WHILE LPAREN expression RPAREN     { $$ = new DoWhile($5, $2, @1.first_line, @1.first_column); }
+    ;
+
+transfer_sentence
+    : RETURN expression SEMICOLON                           { $$ = new Return($2, @1.first_line, @1.first_column); }
+    | BREAK SEMICOLON                                       { $$ = new Break(@1.first_line, @1.first_column);}
+    | CONTINUE SEMICOLON                                    { $$ = new Continue(@1.first_line, @1.first_column);}
     ;
 
 

@@ -9,10 +9,10 @@ export class Block extends Instruction {
         this.instructions = instructions
     }
 
-    public interpreter(environment: Environment, tConsole: string[]) {
+    public interpreter(environment: Environment, tConsole: string[]): any {
         const newEnv = new Environment(environment)
 
-        this.instructions.forEach(instruction => {
+        for (const instruction of this.instructions) {
             try{
                 const element = instruction.interpreter(newEnv, tConsole)
                 if (element != null || element != undefined){
@@ -21,6 +21,6 @@ export class Block extends Instruction {
             } catch (error){
                 console.log(error)
             }
-        });
+        }
     }
 }

@@ -18,7 +18,7 @@ class AST {
         for (let index = 0; index < this.tConsole.length; index++) {
             exit += this.tConsole[index].toString();
         }
-        return exit;
+        return exit.toString();
     }
 }
 exports.AST = AST;
