@@ -8,6 +8,7 @@
     const { Casting } = require('../js/Expression/Casting');
     const { toLowUp } = require('../js/Expression/toLowUp');
     const { Round } = require('../js/Expression/Round');
+    const { ToString } = require('../js/Expression/ToString');
     const { ArithmeticOp, RelationalOp, LogicalOp, Result, dataType } = require('../js/Expression/Result');
     const { Cout } = require('../js/Instruction/Cout');
     const { Block } = require('../js/Instruction/Block');
@@ -19,6 +20,10 @@
     const { Break } = require('../js/Instruction/Break');
     const { Continue } = require('../js/Instruction/Continue');
     const { Return } = require('../js/Instruction/Return');
+    const { Switch } = require('../js/Instruction/Switch');
+    const { Case } = require('../js/Instruction/Case');
+    const { Default } = require('../js/Instruction/Default');
+    const { For } = require('../js/Instruction/For');
     const { IncDecFunction } = require('../js/Instruction/IncDecFunction');
     const { newValue } = require('../js/Instruction/newValue');
     const { AST } = require('../js/AST');
@@ -65,6 +70,17 @@
 "return" {return 'RETURN';}
 "break"  {return 'BREAK';}
 "continue" {return 'CONTINUE';}
+
+/*ToString*/
+"std::tostring" {return 'TOSTRING';}
+
+/*Switch Case*/
+"switch" {return 'SWITCH';}
+"case"   {return 'CASE';}
+"default" {return 'DEFAULT';}
+
+/*for*/
+"for"    {return 'FOR';}
 
 /*Incremental and Decremental*/
 "++"    {return 'INC';}
@@ -149,14 +165,33 @@ statements
     ;
 
 statement
+    : functions                                             { $$ = $1; }
+    | var_cases                                             { $$ = $1; }
+    | increment_decrement SEMICOLON                         { $$ = $1; }
+    | transfer_sentence                                     { $$ = $1; }
+    ;
+
+functions
     : fn_count                                              { $$ = $1; }
     | fn_if                                                 { $$ = $1; }
-    | var_declaration                                       { $$ = $1; }
-    | increment_decrement                                   { $$ = $1; }
-    | var_edition                                           { $$ = $1; }
     | fn_while                                              { $$ = $1; }
     | fn_DoWhile                                            { $$ = $1; }
-    | transfer_sentence                                     { $$ = $1; }
+    | fn_Switch                                             { $$ = $1; }
+    | fn_for                                                { $$ = $1; }
+    ;
+
+var_cases
+    : var_edition  SEMICOLON                            { $$ = $1; }
+    | var_declaration SEMICOLON                         { $$ = $1; }
+    ;
+
+fn_for
+    : FOR LPAREN var_cases expression SEMICOLON actualization RPAREN block { $$ = new For($3, $4, $6, $8, @1.first_line, @1.first_column);}
+    ;
+
+actualization
+    : var_edition                                           { $$ = $1; }
+    | increment_decrement                                   { $$ = $1; }
     ;
 
 var_declaration
@@ -169,17 +204,17 @@ var_list
     ;
 
 end_declaration
-    : SEMICOLON                                             { $$ = null; }
-    | ASSIGN expression SEMICOLON                           { $$ = $2; }
+    :                                                       { $$ = null; }
+    | ASSIGN expression                                     { $$ = $2; }
     ;
 
 increment_decrement
-    : ID INC SEMICOLON                                      { $$ = new IncDecFunction($1, true, @2.first_line, @2.first_column); }
-    | ID DEC SEMICOLON                                      { $$ = new IncDecFunction($1, false, @2.first_line, @2.first_column); }
+    : ID INC                                      { $$ = new IncDecFunction($1, true, @2.first_line, @2.first_column); }
+    | ID DEC                                      { $$ = new IncDecFunction($1, false, @2.first_line, @2.first_column); }
     ;
 
 var_edition
-    : ID ASSIGN expression SEMICOLON                        { $$ = new newValue($1, $3, @2.first_line, @2.first_column); }
+    : ID ASSIGN expression                        { $$ = new newValue($1, $3, @2.first_line, @2.first_column); }
     ;
 
 fn_while
@@ -196,7 +231,6 @@ transfer_sentence
     | CONTINUE SEMICOLON                                    { $$ = new Continue(@1.first_line, @1.first_column);}
     ;
 
-
 fn_count
     : COUT INSERTION expression end_count                   { $$ = new Cout($3, $4, @1.first_line, @1.first_column);}
     ;
@@ -206,6 +240,30 @@ end_count
     | INSERTION ENDL SEMICOLON                              { $$ = true; }
     ;
 
+fn_Switch
+    : SWITCH LPAREN expression RPAREN LBRACE case_l fn_default RBRACE   { $$ = new Switch($3, $6, $7, @1.first_line, @1.first_column); }
+    ;
+
+case_l
+    : case_list                 { $$ = $1;}
+    |                           { $$ = null;}
+    ;
+
+case_list
+    : case_list cases           { $1.push($2); $$ = $1;}
+    | cases                     { $$ = [$1];}
+    ;
+
+cases
+    : CASE expression COLON statements { $$ = new Case($2, $4, @1.first_line, @1.first_column); }
+    ;
+
+fn_default
+    : DEFAULT COLON statements          { $$ = new Default($3, @1.first_line, @1.first_column); }
+    |                                   { $$ = null; }
+    ;
+
+
 expression
     : operations                    { $$ = $1; }
     | relational                    { $$ = $1; }
@@ -214,6 +272,7 @@ expression
     | casting                       { $$ = $1; }
     | toLowUp                       { $$ = $1; }
     | round                         { $$ = $1; }
+    | ToString                      { $$ = $1; }
     | data_type                     { $$ = $1; }
     | LPAREN expression RPAREN      { $$ = $2; }
     ;
@@ -248,16 +307,20 @@ ternary
     ;
 
 casting
-    : LPAREN TYPE RPAREN expression {$$ = new Casting($2, $4, @1.first_line, @1.first_column);}
+    : LPAREN TYPE RPAREN expression { $$ = new Casting($2, $4, @1.first_line, @1.first_column); }
     ;
 
 toLowUp
-    : TOLOWER LPAREN expression RPAREN {$$ = new toLowUp($3, true, @1.first_line, @1.first_column);}
-    | TOUPPER LPAREN expression RPAREN {$$ = new toLowUp($3, false, @1.first_line, @1.first_column);}
+    : TOLOWER LPAREN expression RPAREN { $$ = new toLowUp($3, true, @1.first_line, @1.first_column); }
+    | TOUPPER LPAREN expression RPAREN { $$ = new toLowUp($3, false, @1.first_line, @1.first_column); }
     ;
 
 round
-    : ROUND LPAREN expression RPAREN   {$$ = new Round($3, @1.first_line, @1.first_column);}
+    : ROUND LPAREN expression RPAREN   { $$ = new Round($3, @1.first_line, @1.first_column); }
+    ;
+
+ToString
+    : TOSTRING LPAREN expression RPAREN { $$ = new ToString($3, @1.first_line, @1.first_column); }
     ;
 
 data_type

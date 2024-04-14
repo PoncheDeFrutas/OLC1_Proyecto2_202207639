@@ -1,6 +1,6 @@
 import { Expression } from "../Abstract/Expression";
-import { Environment} from "../Symbol/Environment";
-import { Result} from "../Abstract/Result";
+import { Environment } from "../Symbol/Environment";
+import { Result } from "../Abstract/Result";
 
 export class IdValue extends Expression{
 

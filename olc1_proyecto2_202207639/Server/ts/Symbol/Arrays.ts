@@ -1,10 +1,13 @@
 import { Symbol } from "./Symbol";
+import {dataType} from "../Abstract/Result";
 
 export class Arrays{
     public values : Symbol[];
+    public type: dataType;
 
-    constructor(){
+    constructor(type: dataType){
         this.values = [];
+        this.type = type;
     }
 
     public getValue(index: number){

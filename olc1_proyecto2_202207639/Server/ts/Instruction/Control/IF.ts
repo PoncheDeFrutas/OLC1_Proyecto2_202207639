@@ -2,7 +2,7 @@ import { Expression } from "../../Abstract/Expression";
 import { dataType } from "../../Abstract/Result";
 import { Instruction } from "../../Abstract/Instruction";
 import { Block } from "../Block";
-import { Environment} from "../../Symbol/Environment";
+import { Environment } from "../../Symbol/Environment";
 
 export class FN_IF extends Instruction {
     condition: Expression

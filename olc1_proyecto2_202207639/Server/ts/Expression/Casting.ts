@@ -34,13 +34,13 @@ export class Casting extends Expression{
             case "double":
                 switch (value.type) {
                     case dataType.NUMBER:
-                        result = {value: value.value + 0.0, type: dataType.DOUBLE};
+                        result = {value: value.value.toFixed(1), type: dataType.DOUBLE};
                         break;
                     case dataType.DOUBLE:
-                        result = {value: value.value, type: dataType.DOUBLE};
+                        result = {value: value.value.toFixed(1), type: dataType.DOUBLE};
                         break;
                     case dataType.CHAR:
-                        result = {value: value.value.charCodeAt(0) + 0.0, type: dataType.DOUBLE};
+                        result = {value: value.value.charCodeAt(0).toFixed(1), type: dataType.DOUBLE};
                         break;
                     default:
                         throw Error("Error: Type mismatch");
@@ -53,7 +53,7 @@ export class Casting extends Expression{
                     throw new Error("Error: Type mismatch");
                 }
                 break;
-            case "string":
+            case "std::string":
                 if (value.type == dataType.NUMBER || value.type == dataType.DOUBLE) {
                     result = {value: value.value.toString(), type: dataType.STRING};
                 } else {

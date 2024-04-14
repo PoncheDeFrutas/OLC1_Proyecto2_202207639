@@ -16,19 +16,19 @@ export class DoWhile extends Instruction {
         }
 
         do {
+            condition = this.condition.interpreter(env);
+            if (condition.type != dataType.BOOL) {
+                throw Error(`Error: Type [${condition.type}] is not valid for [Do While] condition`);
+            }
             const element = this.code.interpreter(env, tConsole);
             if (element != null || element != undefined) {
                 if (element.type == 'break') {
                     break;
                 } else if (element.type == 'continue') {
                     continue;
-                } else{
+                } else {
                     throw Error(`Error: Type [${element.type}] is not valid for [Do While] code`);
                 }
-            }
-            condition = this.condition.interpreter(env);
-            if (condition.type != dataType.BOOL) {
-                throw Error(`Error: Type [${condition.type}] is not valid for [Do While] condition`);
             }
         } while (condition.value);
     }

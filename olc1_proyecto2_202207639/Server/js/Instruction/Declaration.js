@@ -43,15 +43,14 @@ class Declaration extends Instruction_1.Instruction {
                 throw new Error(`Type Error: ${val.type} is not assignable to ${dominantType}`);
             }
             this.id.forEach(id => {
-                environment.save(id, val.value, val.type);
+                environment.save(id, val.value, val.type, this.line, this.column);
             });
         }
         else {
             this.id.forEach(id => {
-                environment.save(id, defaultVal, dominantType);
+                environment.save(id, defaultVal, dominantType, this.line, this.column);
             });
         }
-        return null;
     }
 }
 exports.Declaration = Declaration;

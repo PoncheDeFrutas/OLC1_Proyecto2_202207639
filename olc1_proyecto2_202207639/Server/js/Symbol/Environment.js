@@ -8,18 +8,18 @@ class Environment {
         this.variables = new Map();
         this.functions = new Map();
     }
-    save(id, value, type) {
+    save(id, value, type, line, column) {
         let env = this;
         if (env.variables.has(id)) {
             throw Error("Variable already exist");
         }
-        this.variables.set(id, new Symbol_1.Symbol(id, type, value));
+        this.variables.set(id, new Symbol_1.Symbol(id, type, value, line, column));
     }
-    editVariable(id, value, type) {
+    editVariable(id, value, type, line, column) {
         let env = this;
         while (env != null) {
             if (env.variables.has(id)) {
-                env.variables.set(id, new Symbol_1.Symbol(id, type, value));
+                env.variables.set(id, new Symbol_1.Symbol(id, type, value, line, column));
                 return;
             }
             env = env.previous;

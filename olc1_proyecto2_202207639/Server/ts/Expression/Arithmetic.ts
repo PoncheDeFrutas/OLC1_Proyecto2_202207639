@@ -25,10 +25,8 @@ export class Arithmetic extends Expression{
                 dominantType = UMINUS[leftResult.type];
                 switch (dominantType) {
                     case dataType.NUMBER:
-                        convertType(leftResult);
                         return {value: -leftResult.value, type: dominantType}
                     case dataType.DOUBLE:
-                        convertType(leftResult);
                         return {value: -leftResult.value, type: dominantType}
                     default:
                         throw Error("Error: Type mismatch");

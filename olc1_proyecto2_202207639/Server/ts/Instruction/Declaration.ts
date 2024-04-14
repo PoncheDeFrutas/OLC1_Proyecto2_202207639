@@ -1,7 +1,7 @@
-import {Instruction} from "../Abstract/Instruction";
-import {Environment} from "../Symbol/Environment";
-import {Expression} from "../Abstract/Expression";
-import {dataType} from "../Abstract/Result";
+import { Instruction } from "../Abstract/Instruction";
+import { Environment } from "../Symbol/Environment";
+import { Expression } from "../Abstract/Expression";
+import { dataType } from "../Abstract/Result";
 
 export class Declaration extends Instruction {
 
@@ -16,7 +16,7 @@ export class Declaration extends Instruction {
         this.value = value;
     }
 
-    public interpreter(environment: Environment, tConsole: string[]): null {
+    public interpreter(environment: Environment, tConsole: string[]): any {
         let dominantType: dataType;
         let defaultVal: any;
 
@@ -51,14 +51,13 @@ export class Declaration extends Instruction {
                 throw new Error(`Type Error: ${val.type} is not assignable to ${dominantType}`)
             }
             this.id.forEach(id => {
-                environment.save(id, val.value, val.type);
+                environment.save(id, val.value, val.type, this.line, this.column);
             });
         } else{
             this.id.forEach(id => {
-                environment.save(id, defaultVal, dominantType);
+                environment.save(id, defaultVal, dominantType, this.line, this.column);
             });
         }
-        return null
     }
 }
 

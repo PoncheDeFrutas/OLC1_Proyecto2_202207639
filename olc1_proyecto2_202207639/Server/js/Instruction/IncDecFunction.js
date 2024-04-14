@@ -10,20 +10,21 @@ class IncDecFunction extends Instruction_1.Instruction {
         this.IncDec = IncDec;
     }
     interpreter(environment, tConsole) {
+        var _a, _b, _c, _d;
         const value = environment.getVariable(this.id);
         if (value == null) {
             throw new Error(`Variable ${this.id} doesn't exist`);
         }
         if (value.type == Result_1.dataType.NUMBER || value.type == Result_1.dataType.DOUBLE) {
             if (this.IncDec) {
-                environment.editVariable(this.id, value.value + 1, value.type);
+                environment.editVariable(this.id, value.value + 1, value.type, (_a = environment.getVariable(this.id)) === null || _a === void 0 ? void 0 : _a.line, (_b = environment.getVariable(this.id)) === null || _b === void 0 ? void 0 : _b.column);
             }
             else {
-                environment.editVariable(this.id, value.value - 1, value.type);
+                environment.editVariable(this.id, value.value - 1, value.type, (_c = environment.getVariable(this.id)) === null || _c === void 0 ? void 0 : _c.line, (_d = environment.getVariable(this.id)) === null || _d === void 0 ? void 0 : _d.column);
             }
         }
         else {
-            throw new Error(`Type Error: ${value.type} is not assignable to number`);
+            throw new Error(`Type Error: ${value.type} is not assignable to Inc Dec`);
         }
         return null;
     }

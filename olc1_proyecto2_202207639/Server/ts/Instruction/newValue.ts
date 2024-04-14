@@ -25,7 +25,7 @@ export class newValue extends Instruction {
             if (val.type != value.type) {
                 throw new Error(`Type Error: ${value.type} is not assignable to ${val.type}`)
             }
-            environment.editVariable(this.id, value.value, value.type);
+            environment.editVariable(this.id, value.value, value.type, this.line, this.column);
         } else {
             throw new Error("Error: Value can't be null");
         }

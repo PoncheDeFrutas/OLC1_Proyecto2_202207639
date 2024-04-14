@@ -23,7 +23,7 @@ app.use(cors());
 app.use(express.json());
 app.post('/interpreter', (req, res) => {
     const content = req.body.content;
-    const result = interpreter(content);
+    const result = interpreter(content.toLowerCase());
     res.json({ result: result });
 });
 app.listen(port, () => {

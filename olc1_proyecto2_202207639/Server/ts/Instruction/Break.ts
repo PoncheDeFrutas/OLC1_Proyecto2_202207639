@@ -1,5 +1,4 @@
 import { Instruction } from "../Abstract/Instruction";
-import { Expression } from "../Abstract/Expression";
 import { Environment } from "../Symbol/Environment";
 
 export class Break extends Instruction {
