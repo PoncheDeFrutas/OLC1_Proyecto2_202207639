@@ -145,6 +145,7 @@
 /lex
 
 /*Precedence------------*/
+
 %right 'TYPE'
 %right 'TERNARY'
 %left 'OR'
@@ -361,13 +362,15 @@ block
 vectors
     : TYPE ID LBRACKET RBRACKET ASSIGN NEW TYPE LBRACKET expression RBRACKET SEMICOLON { $$ = new DeclarationVector($1, $2, $7, $9, null, true, @1.first_line, @1.first_column); }
     | TYPE ID LBRACKET RBRACKET LBRACKET RBRACKET ASSIGN NEW TYPE LBRACKET expression RBRACKET LBRACKET expression RBRACKET SEMICOLON { $$ = new DeclarationVector($1, $2, $9, $11, $14, false, @1.first_line, @1.first_column); }
+    | TYPE ID LBRACKET RBRACKET ASSIGN LBRACKET value_list RBRACKET SEMICOLON { $$ = new DeclarationVector2($1, $2, $7, true, @1.first_line, @1.first_column); }
+    | TYPE ID LBRACKET RBRACKET LBRACKET RBRACKET ASSIGN LBRACKET list_value_list RBRACKET SEMICOLON { $$ = new DeclarationVector2($1, $2, $9, false, @1.first_line, @1.first_column); }
     | ID LBRACKET expression RBRACKET ASSIGN expression SEMICOLON { $$ = new newVectorValue($1, $3, null, $6, @1.first_line, @1.first_column); }
     | ID LBRACKET expression RBRACKET LBRACKET expression RBRACKET ASSIGN expression SEMICOLON  { $$ = new newVectorValue($1, $3, $6, $9, @1.first_line, @1.first_column); }
     ;
 
-value_value_list:
-    | value_value_list COMMA value_list { $1.push($3); $$ = $1; }
-    | value_list                        { $$ = [$1]; }
+list_value_list
+    : list_value_list COMMA LBRACKET value_list RBRACKET { $1.push($4); $$ = $1; }
+    | LBRACKET value_list RBRACKET                        { $$ = [$2]; }
     ;
 
 value_list:
