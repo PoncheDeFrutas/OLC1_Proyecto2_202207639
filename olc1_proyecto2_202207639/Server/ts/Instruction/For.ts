@@ -33,6 +33,5 @@ export class For extends Instruction{
             this.increment.interpreter(newEnv, tConsole)
             condition = this.condition.interpreter(newEnv)
         }
-
     }
 }

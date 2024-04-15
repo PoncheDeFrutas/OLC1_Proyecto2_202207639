@@ -15,10 +15,6 @@ class DoWhile extends Instruction_1.Instruction {
             throw Error(`Error: Type [${condition.type}] is not valid for [While] condition`);
         }
         do {
-            condition = this.condition.interpreter(env);
-            if (condition.type != Result_1.dataType.BOOL) {
-                throw Error(`Error: Type [${condition.type}] is not valid for [Do While] condition`);
-            }
             const element = this.code.interpreter(env, tConsole);
             if (element != null || element != undefined) {
                 if (element.type == 'break') {
@@ -30,6 +26,10 @@ class DoWhile extends Instruction_1.Instruction {
                 else {
                     throw Error(`Error: Type [${element.type}] is not valid for [Do While] code`);
                 }
+            }
+            condition = this.condition.interpreter(env);
+            if (condition.type != Result_1.dataType.BOOL) {
+                throw Error(`Error: Type [${condition.type}] is not valid for [Do While] condition`);
             }
         } while (condition.value);
     }

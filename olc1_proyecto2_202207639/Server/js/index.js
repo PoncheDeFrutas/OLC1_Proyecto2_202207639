@@ -9,7 +9,10 @@ function interpreter(content) {
         return result.getConsole();
     }
     catch (e) {
-        console.log(e);
+        if (e instanceof Error) {
+            return e.message;
+        }
+        return "Algo salio mal";
     }
 }
 const express = require('express');

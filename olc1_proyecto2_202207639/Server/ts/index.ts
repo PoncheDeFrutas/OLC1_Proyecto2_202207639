@@ -9,7 +9,10 @@ function interpreter(content:string) {
         console.log("Analisis exitoso")
         return result.getConsole()
     } catch (e) {
-        console.log(e)
+        if (e instanceof Error){
+            return e.message;
+        }
+        return "Algo salio mal";
     }
 }
 

@@ -9,10 +9,13 @@
     const { toLowUp } = require('../js/Expression/toLowUp');
     const { Round } = require('../js/Expression/Round');
     const { ToString } = require('../js/Expression/ToString');
+    const { VectorValue } = require('../js/Expression/VectorValue');
     const { ArithmeticOp, RelationalOp, LogicalOp, Result, dataType } = require('../js/Expression/Result');
     const { Cout } = require('../js/Instruction/Cout');
     const { Block } = require('../js/Instruction/Block');
     const { Declaration } = require('../js/Instruction/Declaration');
+    const { DeclarationVector } = require('../js/Instruction/DeclarationVector');
+    const { DeclarationVector2 } = require('../js/Instruction/DeclarationVector2');
     const { IdValue } = require('../js/Instruction/IdValue');
     const { FN_IF } = require('../js/Instruction/Control/IF');
     const { While } = require('../js/Instruction/While');
@@ -26,6 +29,7 @@
     const { For } = require('../js/Instruction/For');
     const { IncDecFunction } = require('../js/Instruction/IncDecFunction');
     const { newValue } = require('../js/Instruction/newValue');
+    const { newVectorValue } = require('../js/Instruction/newVectorValue');
     const { AST } = require('../js/AST');
 %}
 /*------------------------------------------------LEXICAL ANALYZER----------------------------------------------------*/
@@ -81,6 +85,9 @@
 
 /*for*/
 "for"    {return 'FOR';}
+
+/*Vector*/
+"new"   {return 'NEW';}
 
 /*Incremental and Decremental*/
 "++"    {return 'INC';}
@@ -167,6 +174,7 @@ statements
 statement
     : functions                                             { $$ = $1; }
     | var_cases                                             { $$ = $1; }
+    | vectors                                               { $$ = $1; }
     | increment_decrement SEMICOLON                         { $$ = $1; }
     | transfer_sentence                                     { $$ = $1; }
     ;
@@ -330,6 +338,8 @@ data_type
     | BOOL                          { $$ = new Primitive($1, dataType.BOOL ,@1.first_line, @1.first_column); }
     | CHAR                          { $$ = new Primitive($1, dataType.CHAR ,@1.first_line, @1.first_column); }
     | STRING                        { $$ = new Primitive($1, dataType.STRING ,@1.first_line, @1.first_column); }
+    | ID LBRACKET expression RBRACKET { $$ = new VectorValue($1, $3, null,@1.first_line, @1.first_column); }
+    | ID LBRACKET expression RBRACKET LBRACKET expression RBRACKET { $$ = new VectorValue($1, $3, $6,@1.first_line, @1.first_column); }
     ;
 
 fn_if
@@ -345,4 +355,22 @@ fn_else
 block
     : LBRACE statements RBRACE      { $$ = new Block($2, @1.first_line, @1.first_column); }
     | LBRACE RBRACE                 { $$ = new Block([], @1.first_line, @1.first_column); }
+    ;
+
+
+vectors
+    : TYPE ID LBRACKET RBRACKET ASSIGN NEW TYPE LBRACKET expression RBRACKET SEMICOLON { $$ = new DeclarationVector($1, $2, $7, $9, null, true, @1.first_line, @1.first_column); }
+    | TYPE ID LBRACKET RBRACKET LBRACKET RBRACKET ASSIGN NEW TYPE LBRACKET expression RBRACKET LBRACKET expression RBRACKET SEMICOLON { $$ = new DeclarationVector($1, $2, $9, $11, $14, false, @1.first_line, @1.first_column); }
+    | ID LBRACKET expression RBRACKET ASSIGN expression SEMICOLON { $$ = new newVectorValue($1, $3, null, $6, @1.first_line, @1.first_column); }
+    | ID LBRACKET expression RBRACKET LBRACKET expression RBRACKET ASSIGN expression SEMICOLON  { $$ = new newVectorValue($1, $3, $6, $9, @1.first_line, @1.first_column); }
+    ;
+
+value_value_list:
+    | value_value_list COMMA value_list { $1.push($3); $$ = $1; }
+    | value_list                        { $$ = [$1]; }
+    ;
+
+value_list:
+    | value_list COMMA expression       { $1.push($3); $$ = $1; }
+    | expression                        { $$ = [$1]; }
     ;
