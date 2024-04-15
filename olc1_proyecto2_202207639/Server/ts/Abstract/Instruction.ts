@@ -1,6 +1,6 @@
-import { Result } from "./Result";
+import { Environment } from "../Symbol/Environment";
 
-export abstract class Expression {
+export abstract class Instruction {
     public line: number;
     public column: number;
 
@@ -9,5 +9,5 @@ export abstract class Expression {
         this.column = column;
     }
 
-    public abstract interpreter(): Result;
+    public abstract interpreter(environment: Environment, tConsole:string[]): any;
 }

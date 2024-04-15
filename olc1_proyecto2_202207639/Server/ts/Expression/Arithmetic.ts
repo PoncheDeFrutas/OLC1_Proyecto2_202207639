@@ -1,5 +1,7 @@
-import {Expression} from "./Expression";
-import {ArithmeticOp, dataType, Result} from "./Result";
+import { env } from "process";
+import { Environment } from "../Symbol/Environment";
+import { Expression } from "../Abstract/Expression";
+import { ArithmeticOp, dataType, Result } from "../Abstract/Result";
 
 export class Arithmetic extends Expression{
     public left: Expression;
@@ -13,9 +15,9 @@ export class Arithmetic extends Expression{
         this.op = op;
     }
 
-    public interpreter(): Result {
-        const leftResult = this.left.interpreter();
-        const rightResult = this.right.interpreter();
+    public interpreter(environment: Environment): Result {
+        const leftResult = this.left.interpreter(environment);
+        const rightResult = this.right.interpreter(environment);
         let dominantType;
 
         switch (this.op) {
@@ -23,10 +25,8 @@ export class Arithmetic extends Expression{
                 dominantType = UMINUS[leftResult.type];
                 switch (dominantType) {
                     case dataType.NUMBER:
-                        convertType(leftResult);
                         return {value: -leftResult.value, type: dominantType}
                     case dataType.DOUBLE:
-                        convertType(leftResult);
                         return {value: -leftResult.value, type: dominantType}
                     default:
                         throw Error("Error: Type mismatch");
@@ -100,6 +100,10 @@ export class Arithmetic extends Expression{
             case ArithmeticOp.POW:
                 dominantType = POW[leftResult.type][rightResult.type];
                 switch (dominantType) {
+                    case dataType.NUMBER:
+                        convertType(leftResult);
+                        convertType(rightResult);
+                        return {value: Math.pow(leftResult.value, rightResult.value), type: dominantType}
                     case dataType.DOUBLE:
                         convertType(leftResult);
                         convertType(rightResult);

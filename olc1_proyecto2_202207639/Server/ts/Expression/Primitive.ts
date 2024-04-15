@@ -1,5 +1,5 @@
-import { Expression } from "./Expression";
-import { dataType, Result } from "./Result";
+import { Expression } from "../Abstract/Expression";
+import { dataType, Result } from "../Abstract/Result";
 
 export class Primitive extends Expression {
     exp: string;

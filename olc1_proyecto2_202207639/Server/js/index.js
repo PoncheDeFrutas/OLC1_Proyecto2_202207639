@@ -9,7 +9,10 @@ function interpreter(content) {
         return result.getConsole();
     }
     catch (e) {
-        console.log(e);
+        if (e instanceof Error) {
+            return e.message;
+        }
+        return "Algo salio mal";
     }
 }
 const express = require('express');
@@ -23,7 +26,7 @@ app.use(cors());
 app.use(express.json());
 app.post('/interpreter', (req, res) => {
     const content = req.body.content;
-    const result = interpreter(content);
+    const result = interpreter(content.toLowerCase());
     res.json({ result: result });
 });
 app.listen(port, () => {

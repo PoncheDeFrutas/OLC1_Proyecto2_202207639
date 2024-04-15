@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Primitive = void 0;
-const Expression_1 = require("./Expression");
-const Result_1 = require("./Result");
+const Expression_1 = require("../Abstract/Expression");
+const Result_1 = require("../Abstract/Result");
 class Primitive extends Expression_1.Expression {
     constructor(exp, type, line, column) {
         super(line, column);

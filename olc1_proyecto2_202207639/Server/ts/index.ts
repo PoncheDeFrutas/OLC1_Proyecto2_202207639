@@ -9,7 +9,10 @@ function interpreter(content:string) {
         console.log("Analisis exitoso")
         return result.getConsole()
     } catch (e) {
-        console.log(e)
+        if (e instanceof Error){
+            return e.message;
+        }
+        return "Algo salio mal";
     }
 }
 
@@ -27,7 +30,7 @@ app.use(cors())
 app.use(express.json())
 app.post('/interpreter', (req:Request, res:Response) => {
     const content = req.body.content
-    const result = interpreter(content)
+    const result = interpreter(content.toLowerCase())
     res.json({result: result})
 })
 
