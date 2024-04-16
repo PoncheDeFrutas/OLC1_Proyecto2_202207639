@@ -10,6 +10,6 @@ export class Return extends Instruction {
 
     public interpreter(environment: Environment): any {
         const value = this.exp.interpreter(environment);
-        return {line: this.line, column: this.column, type: "Return", value: value.value, typeValue: value.type};
+        return {line: this.line, column: this.column, type: "return", value: value.value, typeValue: value.type};
     }
 }

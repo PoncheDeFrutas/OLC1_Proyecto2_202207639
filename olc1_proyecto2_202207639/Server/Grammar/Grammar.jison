@@ -27,6 +27,8 @@
     const { Case } = require('../js/Instruction/Case');
     const { Default } = require('../js/Instruction/Default');
     const { For } = require('../js/Instruction/For');
+    const { Function } = require('../js/Instruction/Function');
+    const { FunctionValue } = require('../js/Instruction/FunctionValue');
     const { IncDecFunction } = require('../js/Instruction/IncDecFunction');
     const { newValue } = require('../js/Instruction/newValue');
     const { newVectorValue } = require('../js/Instruction/newVectorValue');
@@ -88,6 +90,9 @@
 
 /*Vector*/
 "new"   {return 'NEW';}
+
+/*Functions*/
+"void" {return 'VOID';}
 
 /*Incremental and Decremental*/
 "++"    {return 'INC';}
@@ -178,6 +183,7 @@ statement
     | vectors                                               { $$ = $1; }
     | increment_decrement SEMICOLON                         { $$ = $1; }
     | transfer_sentence                                     { $$ = $1; }
+    | general_functions                                     { $$ = $1; }
     ;
 
 functions
@@ -190,8 +196,8 @@ functions
     ;
 
 var_cases
-    : var_edition  SEMICOLON                            { $$ = $1; }
-    | var_declaration SEMICOLON                         { $$ = $1; }
+    : var_edition SEMICOLON                        { $$ = $1; }
+    | var_declaration SEMICOLON                    { $$ = $1; }
     ;
 
 fn_for
@@ -341,6 +347,7 @@ data_type
     | STRING                        { $$ = new Primitive($1, dataType.STRING ,@1.first_line, @1.first_column); }
     | ID LBRACKET expression RBRACKET { $$ = new VectorValue($1, $3, null,@1.first_line, @1.first_column); }
     | ID LBRACKET expression RBRACKET LBRACKET expression RBRACKET { $$ = new VectorValue($1, $3, $6,@1.first_line, @1.first_column); }
+    | ID LPAREN value_list RPAREN   { $$ = new FunctionValue($1, $3, @1.first_line, @1.first_column); }
     ;
 
 fn_if
@@ -358,15 +365,23 @@ block
     | LBRACE RBRACE                 { $$ = new Block([], @1.first_line, @1.first_column); }
     ;
 
-
 vectors
-    : TYPE ID LBRACKET RBRACKET ASSIGN NEW TYPE LBRACKET expression RBRACKET SEMICOLON { $$ = new DeclarationVector($1, $2, $7, $9, null, true, @1.first_line, @1.first_column); }
-    | TYPE ID LBRACKET RBRACKET LBRACKET RBRACKET ASSIGN NEW TYPE LBRACKET expression RBRACKET LBRACKET expression RBRACKET SEMICOLON { $$ = new DeclarationVector($1, $2, $9, $11, $14, false, @1.first_line, @1.first_column); }
-    | TYPE ID LBRACKET RBRACKET ASSIGN LBRACKET value_list RBRACKET SEMICOLON { $$ = new DeclarationVector2($1, $2, $7, true, @1.first_line, @1.first_column); }
-    | TYPE ID LBRACKET RBRACKET LBRACKET RBRACKET ASSIGN LBRACKET list_value_list RBRACKET SEMICOLON { $$ = new DeclarationVector2($1, $2, $9, false, @1.first_line, @1.first_column); }
-    | ID LBRACKET expression RBRACKET ASSIGN expression SEMICOLON { $$ = new newVectorValue($1, $3, null, $6, @1.first_line, @1.first_column); }
+    : vectors_declaration SEMICOLON          { $$ = $1; }
+    | vector_modification           { $$ = $1; }
+    ;
+
+vectors_declaration
+    : TYPE ID LBRACKET RBRACKET ASSIGN NEW TYPE LBRACKET expression RBRACKET  { $$ = new DeclarationVector($1, $2, $7, $9, null, true, @1.first_line, @1.first_column); }
+    | TYPE ID LBRACKET RBRACKET LBRACKET RBRACKET ASSIGN NEW TYPE LBRACKET expression RBRACKET LBRACKET expression RBRACKET  { $$ = new DeclarationVector($1, $2, $9, $11, $14, false, @1.first_line, @1.first_column); }
+    | TYPE ID LBRACKET RBRACKET ASSIGN LBRACKET value_list RBRACKET  { $$ = new DeclarationVector2($1, $2, $7, true, @1.first_line, @1.first_column); }
+    | TYPE ID LBRACKET RBRACKET LBRACKET RBRACKET ASSIGN LBRACKET list_value_list RBRACKET  { $$ = new DeclarationVector2($1, $2, $9, false, @1.first_line, @1.first_column); }
+    ;
+
+vector_modification
+    : ID LBRACKET expression RBRACKET ASSIGN expression SEMICOLON { $$ = new newVectorValue($1, $3, null, $6, @1.first_line, @1.first_column); }
     | ID LBRACKET expression RBRACKET LBRACKET expression RBRACKET ASSIGN expression SEMICOLON  { $$ = new newVectorValue($1, $3, $6, $9, @1.first_line, @1.first_column); }
     ;
+
 
 list_value_list
     : list_value_list COMMA LBRACKET value_list RBRACKET { $1.push($4); $$ = $1; }
@@ -376,4 +391,28 @@ list_value_list
 value_list:
     | value_list COMMA expression       { $1.push($3); $$ = $1; }
     | expression                        { $$ = [$1]; }
+    ;
+
+general_functions
+    : function_declaration      { $$ = $1 }
+    | method_declaration        { $$ = $1 }
+    ;
+
+
+function_declaration
+    : TYPE ID LPAREN parameter_list RPAREN block     { $$ = new Function($1, $2, $4, $6, @1.first_line, @1.first_column); }
+    ;
+
+method_declaration
+    : VOID ID LPAREN parameter_list RPAREN block     { $$ = new Function($1, $2, $4, $6, @1.first_line, @1.first_column); }
+    ;
+
+parameter_list
+    : parameter_list COMMA parameter    { $1.push($3); $$ = $1; }
+    | parameter                         { $$ = [$1]; }
+    ;
+
+parameter
+    : TYPE ID   { $$ = new Declaration($1, [$2], null, @1.first_line, @1.first_column);}
+    | vectors_declaration       { $$ = $1 }
     ;

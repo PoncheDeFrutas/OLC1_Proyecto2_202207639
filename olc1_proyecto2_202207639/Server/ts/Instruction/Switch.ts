@@ -27,7 +27,7 @@ export class Switch extends Instruction{
         if (this.Cases != null){
             for (const Case of this.Cases) {
                 const element = Case.condition.interpreter(newEnv);
-                if (element.value == condition.value && element.type == condition.type){
+                if (element.value == condition.value && element.type == condition.type && !value){
                     const result =  Case.interpreter(newEnv, tConsole);
                     if (result != null || result != undefined){
                         if (result.type == 'break') {
@@ -37,31 +37,40 @@ export class Switch extends Instruction{
                         }
                     }
                     value = true;
-                } else {
-                    if (value){
-                        const result = Case.interpreter(newEnv, tConsole);
-                        if (result != null || result != undefined){
-                            if (result.type == 'break') {
-                                value = false;
-                                break;
-                            } else{
-                                throw Error(`Error: Type [${result.type}] is not valid for [Case] code`);
-                            }
+                } else if(value){
+                    const result = Case.interpreter(newEnv, tConsole);
+                    if (result != null || result != undefined){
+                        if (result.type == 'break') {
+                            value = false;
+                            break;
+                        } else{
+                            throw Error(`Error: Type [${result.type}] is not valid for [Case] code`);
                         }
                     }
                 }
             }
-            if(this.Default != null && value){
+            if (this.Default != null && value){
                 const result = this.Default.interpreter(newEnv, tConsole);
                 if (result != null || result != undefined){
-                    throw Error(`Error: Type [${result.type}] is not valid for [Default] code`);
+                    if (result.type == 'break') {
+                        return;
+                    } else{
+                        throw Error(`Error: Type [${result.type}] is not valid for [Case] code`);
+                    }
                 }
             }
-        } else if (this.Default != null){
+        }
+        if (this.Default != null && !value){
             const result = this.Default.interpreter(newEnv, tConsole);
             if (result != null || result != undefined){
-                throw Error(`Error: Type [${result.type}] is not valid for [Default] code`);
+                if (result.type == 'break') {
+                    return;
+                } else{
+                    throw Error(`Error: Type [${result.type}] is not valid for [Case] code`);
+                }
             }
         }
+
+
     }
 }

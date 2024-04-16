@@ -15,10 +15,8 @@ class DeclarationVector extends Instruction_1.Instruction {
     }
     interpreter(environment, tConsole) {
         var _a;
-        if (this.confirmType != null) {
-            if (this.confirmType != this.type) {
-                throw new Error(`Type Error: ${this.confirmType} is not assignable to ${this.type}`);
-            }
+        if (this.confirmType != this.type) {
+            throw new Error(`Type Error: ${this.confirmType} is not assignable to ${this.type}`);
         }
         let dominantType;
         let defaultVal;

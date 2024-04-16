@@ -15,12 +15,24 @@ class Environment {
         if (env.variables.has(id)) {
             throw Error("Variable already exist");
         }
+        else if (env.vectors.has(id)) {
+            throw Error("This ID is a Vector");
+        }
+        else if (env.functions.has(id)) {
+            throw Error("This ID is a function");
+        }
         this.variables.set(id, new Symbol_1.Symbol(id, type, value, line, column));
     }
     saveVectors(id, type, rows, columns, line, column) {
         let env = this;
         if (env.vectors.has(id)) {
             throw Error("Vector already exist");
+        }
+        else if (env.variables.has(id)) {
+            throw Error("This ID is a Variable");
+        }
+        else if (env.functions.has(id)) {
+            throw Error("This ID is a function");
         }
         this.vectors.set(id, new Arrays_1.Arrays(id, type, rows, columns, line, column));
     }
@@ -46,7 +58,19 @@ class Environment {
         throw Error("Variable don't exist");
     }
     saveFunction(id, func) {
-        // TODO arreglar esta madre
+        let env = this;
+        while (env != null) {
+            if (env.functions.has(id)) {
+                throw Error("Function already exist");
+            }
+            else if (env.variables.has(id)) {
+                throw Error("This ID is a Variable");
+            }
+            else if (env.vectors.has(id)) {
+                throw Error("This ID is a Vector");
+            }
+            env = env.previous;
+        }
         this.functions.set(id, func);
     }
     getVariable(id) {

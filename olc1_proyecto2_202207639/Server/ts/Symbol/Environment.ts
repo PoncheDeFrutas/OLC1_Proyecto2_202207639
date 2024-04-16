@@ -5,9 +5,9 @@ import { Function } from "../Instruction/Function";
 import {Arrays} from "./Arrays";
 
 export class Environment{
-    private variables: Map<string, Symbol>;
-    private vectors : Map<string, Arrays>
-    public functions: Map<string, Function>
+    public variables: Map<string, Symbol>;
+    private vectors : Map<string, Arrays>;
+    public functions: Map<string, Function>;
 
     constructor(public previous: Environment | null){
         this.variables = new Map();
@@ -19,6 +19,10 @@ export class Environment{
         let env: Environment | null = this;
         if(env.variables.has(id)){
             throw Error("Variable already exist")
+        } else if (env.vectors.has(id)){
+            throw Error("This ID is a Vector")
+        } else if (env.functions.has(id)){
+            throw Error("This ID is a function")
         }
         this.variables.set(id, new Symbol(id, type, value, line, column));
     }
@@ -27,6 +31,10 @@ export class Environment{
         let env: Environment | null = this;
         if(env.vectors.has(id)){
             throw Error("Vector already exist")
+        } else if (env.variables.has(id)){
+            throw Error("This ID is a Variable")
+        } else if (env.functions.has(id)){
+            throw Error("This ID is a function")
         }
         this.vectors.set(id, new Arrays(id, type, rows, columns, line, column));
     }
@@ -55,7 +63,17 @@ export class Environment{
     }
 
     public saveFunction(id: string, func: Function){
-        // TODO arreglar esta madre
+        let env: Environment | null = this;
+        while(env != null){
+            if(env.functions.has(id)){
+                throw Error("Function already exist")
+            } else if (env.variables.has(id)){
+                throw Error("This ID is a Variable")
+            } else if (env.vectors.has(id)){
+                throw Error("This ID is a Vector")
+            }
+            env = env.previous;
+        }
         this.functions.set(id, func);
     }
 

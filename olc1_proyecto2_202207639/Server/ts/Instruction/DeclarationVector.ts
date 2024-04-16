@@ -7,12 +7,12 @@ export class DeclarationVector extends Instruction{
 
     public type: string;
     public id: string;
-    public confirmType: string | null;
+    public confirmType: string;
     public row: Expression;
     public columns: Expression | null;
     public simple: boolean;
 
-    constructor(type: string, id: string, confirmType: string | null, row: Expression, columns: Expression | null, simple: boolean, line: number, column: number){
+    constructor(type: string, id: string, confirmType: string, row: Expression, columns: Expression | null, simple: boolean, line: number, column: number){
         super(line, column);
         this.type = type;
         this.id = id;
@@ -24,10 +24,8 @@ export class DeclarationVector extends Instruction{
 
     public interpreter(environment: Environment, tConsole: string[]): any {
 
-        if (this.confirmType != null){
-            if (this.confirmType != this.type){
-                throw new Error(`Type Error: ${this.confirmType} is not assignable to ${this.type}`)
-            }
+        if (this.confirmType != this.type){
+            throw new Error(`Type Error: ${this.confirmType} is not assignable to ${this.type}`)
         }
 
         let dominantType: dataType;

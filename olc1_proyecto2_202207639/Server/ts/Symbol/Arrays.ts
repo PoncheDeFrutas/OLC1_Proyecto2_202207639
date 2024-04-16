@@ -27,6 +27,9 @@ export class Arrays{
     }
 
     public setValue(x: number, y:number,id: string, type: dataType, value: any, line: number, column: number){
+        if (x < 0 || x >= this.values.length || y < 0 || y >= this.values[0].length){
+            throw Error("Index out of bounds");
+        }
         this.values[x][y] = new Symbol(id, type, value, line, column);
     }
 

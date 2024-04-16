@@ -18,7 +18,7 @@ class newValue extends Instruction_1.Instruction {
             if (val.type != value.type) {
                 throw new Error(`Type Error: ${value.type} is not assignable to ${val.type}`);
             }
-            environment.editVariable(this.id, value.value, value.type, this.line, this.column);
+            environment.editVariable(this.id, value.value, value.type, val.line, val.column);
         }
         else {
             throw new Error("Error: Value can't be null");

@@ -1,14 +1,50 @@
-import { Instruction } from "../Abstract/Instruction";
-import { Environment } from "../Symbol/Environment";
+import {Instruction} from "../Abstract/Instruction";
+import {Environment} from "../Symbol/Environment";
+import {dataType} from "../Abstract/Result";
+import {Block} from "./Block";
 
 export class Function extends Instruction{
 
-    constructor(private id:string, private statement:Instruction, public parameters: Array<string>, line: number, column: number){
+    public stype: string;
+    public type: dataType;
+    public id: string;
+    public parameters: Array<Instruction>;
+    public block: Block;
+
+    constructor(stype: string, id: string, parameters: Array<Instruction>, block: Block, line: number, column: number){
         super(line, column);
+        this.type = dataType.NULL;
+        this.id = id;
+        this.parameters = parameters;
+        this.block = block;
+        this.stype = stype;
     }
 
-    public interpreter(environment: Environment, tConsole: string[]){
+    public interpreter(environment: Environment, tConsole: string[]): any {
+        let dominantType: dataType;
+        switch (this.stype) {
+            case "int":
+                dominantType = dataType.NUMBER
+                break;
+            case "double":
+                dominantType = dataType.DOUBLE
+                break;
+            case "bool":
+                dominantType = dataType.BOOL
+                break;
+            case "char":
+                dominantType = dataType.CHAR
+                break;
+            case "std::string":
+                dominantType = dataType.STRING
+                break;
+            case "void":
+                dominantType = dataType.NULL
+                break;
+            default:
+                throw Error("Error: Type not valid")
+        }
+        this.type = dominantType;
         environment.saveFunction(this.id, this);
-        return null;
     }
 }
