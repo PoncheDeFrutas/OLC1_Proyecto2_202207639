@@ -17,12 +17,12 @@ export class For extends Instruction{
         this.block = block
     }
 
-    public interpreter(environment: Environment, tConsole: string[]): any {
+    public interpreter(environment: Environment): any {
         const newEnv = new Environment(environment)
-        this.variable.interpreter(newEnv, tConsole)
+        this.variable.interpreter(newEnv)
         let condition = this.condition.interpreter(newEnv)
         while(condition.value){
-            const element = this.block.interpreter(newEnv, tConsole)
+            const element = this.block.interpreter(newEnv)
             if (element != null || element != undefined) {
                 if (element.type == 'break') {
                     break;
@@ -30,7 +30,7 @@ export class For extends Instruction{
                     throw Error(`Error: Type [${element.type}] is not valid for [For] code`);
                 }
             }
-            this.increment.interpreter(newEnv, tConsole)
+            this.increment.interpreter(newEnv)
             condition = this.condition.interpreter(newEnv)
         }
     }

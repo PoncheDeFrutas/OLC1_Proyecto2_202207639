@@ -13,7 +13,7 @@ class DeclarationVector extends Instruction_1.Instruction {
         this.columns = columns;
         this.simple = simple;
     }
-    interpreter(environment, tConsole) {
+    interpreter(environment) {
         var _a;
         if (this.confirmType != this.type) {
             throw new Error(`Type Error: ${this.confirmType} is not assignable to ${this.type}`);

@@ -8,10 +8,10 @@ class Case extends Instruction_1.Instruction {
         this.condition = condition;
         this.instructions = instructions;
     }
-    interpreter(environment, tConsole) {
+    interpreter(environment) {
         for (const instruction of this.instructions) {
             try {
-                const element = instruction.interpreter(environment, tConsole);
+                const element = instruction.interpreter(environment);
                 if (element != null || element != undefined) {
                     return element;
                 }

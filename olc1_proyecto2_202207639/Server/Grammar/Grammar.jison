@@ -10,13 +10,13 @@
     const { Round } = require('../js/Expression/Round');
     const { ToString } = require('../js/Expression/ToString');
     const { VectorValue } = require('../js/Expression/VectorValue');
-    const { ArithmeticOp, RelationalOp, LogicalOp, Result, dataType } = require('../js/Expression/Result');
+    const { ArithmeticOp, RelationalOp, LogicalOp, Result, dataType } = require('../js/Abstract/Result');
     const { Cout } = require('../js/Instruction/Cout');
     const { Block } = require('../js/Instruction/Block');
     const { Declaration } = require('../js/Instruction/Declaration');
     const { DeclarationVector } = require('../js/Instruction/DeclarationVector');
     const { DeclarationVector2 } = require('../js/Instruction/DeclarationVector2');
-    const { IdValue } = require('../js/Instruction/IdValue');
+    const { IdValue } = require('../js/Expression/IdValue');
     const { FN_IF } = require('../js/Instruction/Control/IF');
     const { While } = require('../js/Instruction/While');
     const { DoWhile } = require('../js/Instruction/DoWhile');
@@ -186,6 +186,7 @@ statement
     | general_functions                                     { $$ = $1; }
     ;
 
+
 functions
     : fn_count                                              { $$ = $1; }
     | fn_if                                                 { $$ = $1; }
@@ -289,6 +290,7 @@ expression
     | round                         { $$ = $1; }
     | ToString                      { $$ = $1; }
     | data_type                     { $$ = $1; }
+    | function_value                { $$ = $1; }
     | LPAREN expression RPAREN      { $$ = $2; }
     ;
 
@@ -347,7 +349,6 @@ data_type
     | STRING                        { $$ = new Primitive($1, dataType.STRING ,@1.first_line, @1.first_column); }
     | ID LBRACKET expression RBRACKET { $$ = new VectorValue($1, $3, null,@1.first_line, @1.first_column); }
     | ID LBRACKET expression RBRACKET LBRACKET expression RBRACKET { $$ = new VectorValue($1, $3, $6,@1.first_line, @1.first_column); }
-    | ID LPAREN value_list RPAREN   { $$ = new FunctionValue($1, $3, @1.first_line, @1.first_column); }
     ;
 
 fn_if
@@ -382,7 +383,6 @@ vector_modification
     | ID LBRACKET expression RBRACKET LBRACKET expression RBRACKET ASSIGN expression SEMICOLON  { $$ = new newVectorValue($1, $3, $6, $9, @1.first_line, @1.first_column); }
     ;
 
-
 list_value_list
     : list_value_list COMMA LBRACKET value_list RBRACKET { $1.push($4); $$ = $1; }
     | LBRACKET value_list RBRACKET                        { $$ = [$2]; }
@@ -396,16 +396,37 @@ value_list:
 general_functions
     : function_declaration      { $$ = $1 }
     | method_declaration        { $$ = $1 }
+    | function_value  SEMICOLON          { $$ = $1 }
     ;
 
 
 function_declaration
-    : TYPE ID LPAREN parameter_list RPAREN block     { $$ = new Function($1, $2, $4, $6, @1.first_line, @1.first_column); }
+    : TYPE ID LPAREN parameter_cases RPAREN block     { $$ = new Function($1, $2, $4, $6, @1.first_line, @1.first_column); }
     ;
 
 method_declaration
-    : VOID ID LPAREN parameter_list RPAREN block     { $$ = new Function($1, $2, $4, $6, @1.first_line, @1.first_column); }
+    : VOID ID LPAREN parameter_cases RPAREN block     { $$ = new Function($1, $2, $4, $6, @1.first_line, @1.first_column); }
     ;
+
+value_list2
+    : /* empty */ { $$ = []; }
+    | non_empty_value_list  { $$ = $1; }
+    ;
+
+non_empty_value_list
+    : non_empty_value_list COMMA expression { $1.push($3); $$ = $1; }
+    | expression { $$ = [$1]; }
+    ;
+
+function_value
+    : ID LPAREN value_list2 RPAREN { $$ = new FunctionValue($1, $3, @1.first_line, @1.first_column); }
+    ;
+
+parameter_cases
+    : parameter_list        { $$ = $1; }
+    |                       { $$ = []; }
+    ;
+
 
 parameter_list
     : parameter_list COMMA parameter    { $1.push($3); $$ = $1; }
@@ -413,6 +434,7 @@ parameter_list
     ;
 
 parameter
-    : TYPE ID   { $$ = new Declaration($1, [$2], null, @1.first_line, @1.first_column);}
-    | vectors_declaration       { $$ = $1 }
+    : TYPE ID                            { $$ = {type:$1, id:$2,vector:false, simple:false};}
+    | TYPE ID LBRACKET RBRACKET          { $$ = {type:$1, id:$2,vector:true, simple:true};}
+    | TYPE ID LBRACKET RBRACKET LBRACKET RBRACKET  { $$ = {type:$1, id:$2,vector:true, simple:false};}
     ;

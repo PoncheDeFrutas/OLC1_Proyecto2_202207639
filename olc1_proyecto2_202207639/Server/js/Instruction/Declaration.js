@@ -10,7 +10,7 @@ class Declaration extends Instruction_1.Instruction {
         this.type = type;
         this.value = value;
     }
-    interpreter(environment, tConsole) {
+    interpreter(environment) {
         let dominantType;
         let defaultVal;
         switch (this.type) {

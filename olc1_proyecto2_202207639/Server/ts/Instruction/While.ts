@@ -9,7 +9,7 @@ export class While extends Instruction {
         super(line, column);
     }
 
-    public interpreter(env: Environment,  tConsole: string[]): any {
+    public interpreter(env: Environment): any {
 
         let condition = this.condition.interpreter(env);
         if (condition.type != dataType.BOOL) {
@@ -21,7 +21,7 @@ export class While extends Instruction {
             if (condition.type != dataType.BOOL) {
                 throw Error(`Error: Type [${condition.type}] is not valid for [While] condition`);
             }
-            const element = this.code.interpreter(env, tConsole);
+            const element = this.code.interpreter(env);
             if (element != null || element != undefined) {
                 if (element.type == 'break') {
                     break;

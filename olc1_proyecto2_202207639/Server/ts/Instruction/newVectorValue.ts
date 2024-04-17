@@ -18,7 +18,7 @@ export class newVectorValue extends Instruction{
             this.value = value;
         }
 
-        public interpreter(environment: Environment, tConsole: string[]): null {
+        public interpreter(environment: Environment): null {
             const vector = environment.getVectors(this.id);
             const value = this.value.interpreter(environment);
             if (vector == null) {

@@ -12,7 +12,7 @@ class Function extends Instruction_1.Instruction {
         this.block = block;
         this.stype = stype;
     }
-    interpreter(environment, tConsole) {
+    interpreter(environment) {
         let dominantType;
         switch (this.stype) {
             case "int":

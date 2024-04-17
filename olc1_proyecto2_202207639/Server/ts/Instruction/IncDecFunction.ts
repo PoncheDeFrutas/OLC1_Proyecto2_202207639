@@ -14,7 +14,7 @@ export class IncDecFunction extends Instruction {
             this.IncDec = IncDec;
         }
 
-        public interpreter(environment: Environment, tConsole: string[]): null {
+        public interpreter(environment: Environment): null {
             const value = environment.getVariable(this.id);
 
             if (value == null) {

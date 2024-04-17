@@ -14,7 +14,7 @@ export class newValue extends Instruction {
         this.value = value;
     }
 
-    public interpreter(environment: Environment, tConsole: string[]): null {
+    public interpreter(environment: Environment): null {
         const val = environment.getVariable(this.id);
         if (val == null) {
             throw new Error(`Variable ${this.id} doesn't exist`);

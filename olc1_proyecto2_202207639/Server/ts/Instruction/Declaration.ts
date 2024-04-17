@@ -16,7 +16,7 @@ export class Declaration extends Instruction {
         this.value = value;
     }
 
-    public interpreter(environment: Environment, tConsole: string[]): any {
+    public interpreter(environment: Environment): any {
         let dominantType: dataType;
         let defaultVal: any;
 

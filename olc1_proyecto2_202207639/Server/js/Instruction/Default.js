@@ -7,10 +7,10 @@ class Default extends Instruction_1.Instruction {
         super(line, column);
         this.instructions = instructions;
     }
-    interpreter(environment, tConsole) {
+    interpreter(environment) {
         for (const instruction of this.instructions) {
             try {
-                const element = instruction.interpreter(environment, tConsole);
+                const element = instruction.interpreter(environment);
                 if (element != null || element != undefined) {
                     if (element != null || element != undefined) {
                         if (element.type == 'break') {

@@ -9,13 +9,13 @@ class DoWhile extends Instruction_1.Instruction {
         this.condition = condition;
         this.code = code;
     }
-    interpreter(env, tConsole) {
+    interpreter(env) {
         let condition = this.condition.interpreter(env);
         if (condition.type != Result_1.dataType.BOOL) {
             throw Error(`Error: Type [${condition.type}] is not valid for [While] condition`);
         }
         do {
-            const element = this.code.interpreter(env, tConsole);
+            const element = this.code.interpreter(env);
             if (element != null || element != undefined) {
                 if (element.type == 'break') {
                     break;

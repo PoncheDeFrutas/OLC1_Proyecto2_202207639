@@ -9,5 +9,5 @@ export abstract class Instruction {
         this.column = column;
     }
 
-    public abstract interpreter(environment: Environment, tConsole:string[]): any;
+    public abstract interpreter(environment: Environment): any;
 }

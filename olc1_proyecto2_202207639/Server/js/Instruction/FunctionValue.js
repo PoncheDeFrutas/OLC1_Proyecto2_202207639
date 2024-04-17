@@ -10,36 +10,84 @@ class FunctionValue extends Instruction_1.Instruction {
         this.id = id;
         this.parameters = parameters;
     }
-    interpreter(environment, tConsole) {
+    interpreter(environment) {
+        var _a, _b;
         const func = environment.getFunction(this.id);
-        const newEnv = new Environment_1.Environment(environment.getGlobal());
         if (func != null) {
-            if (func.parameters.length == this.parameters.length) {
-                for (let i = 0; i < this.parameters.length; i++) {
-                    func.parameters[i].interpreter(newEnv, tConsole);
-                    const result = this.parameters[i].interpreter(newEnv);
-                    const element = Array.from(newEnv.variables)[i];
-                    if (element[1].type == result.type) {
-                        newEnv.editVariable(element[0], result.value, result.type, this.line, this.column);
+            const newEnv = new Environment_1.Environment(environment.getGlobal());
+            if (func.parameters.length != this.parameters.length) {
+                throw new Error("Error: Number of parameters is not correct");
+            }
+            for (let i = 0; i < this.parameters.length; i++) {
+                const parameter = func.parameters[i];
+                const values = this.parameters[i].interpreter(environment);
+                let dominantType;
+                switch (parameter.type) {
+                    case "int":
+                        dominantType = Result_1.dataType.NUMBER;
+                        break;
+                    case "double":
+                        dominantType = Result_1.dataType.DOUBLE;
+                        break;
+                    case "bool":
+                        dominantType = Result_1.dataType.BOOL;
+                        break;
+                    case "char":
+                        dominantType = Result_1.dataType.CHAR;
+                        break;
+                    case "std::string":
+                        dominantType = Result_1.dataType.STRING;
+                        break;
+                    default:
+                        throw Error("Error: Type not valid");
+                }
+                if (parameter.vector) {
+                    if (values.type == Result_1.dataType.ID) {
+                        const vector = newEnv.getVectors(values.value);
+                        if (vector != null) {
+                            if (vector.type != dominantType) {
+                                throw new Error("Error: Type of parameter is not correct");
+                            }
+                            else {
+                                if (parameter.simple && vector.values[0].length == 1) {
+                                    newEnv.saveVectors(parameter.id, vector.type, vector.values.length, 1, this.line, this.column);
+                                    (_a = newEnv.getVectors(parameter.id)) === null || _a === void 0 ? void 0 : _a.setVector(vector.values);
+                                }
+                                else if (!parameter.simple) {
+                                    newEnv.saveVectors(parameter.id, vector.type, vector.values.length, vector.values[0].length, this.line, this.column);
+                                    (_b = newEnv.getVectors(parameter.id)) === null || _b === void 0 ? void 0 : _b.setVector(vector.values);
+                                }
+                                else {
+                                    throw new Error("Error: Type of parameter is not correct");
+                                }
+                            }
+                        }
+                        else {
+                            throw new Error("Error: Vector not found");
+                        }
                     }
                     else {
-                        throw new Error("The type of the parameter is incorrect");
+                        throw new Error("Error: Type of parameter is not correct");
                     }
                 }
-                const block = func.block;
-                const element = block.interpreter(newEnv, tConsole);
-                console.log(tConsole);
-                if (element != null || element != undefined) {
-                    if (element.type == 'return' && func.type == element.typeValue) {
-                        return { value: element.value, type: func.type };
+                else {
+                    if (dominantType != values.type) {
+                        throw new Error("Error: Type of parameter is not correct");
                     }
                     else {
-                        throw Error(`Error: Type [${element.type}] is not valid for [Function] code`);
+                        newEnv.save(parameter.id, values.value, values.type, this.line, this.column);
                     }
                 }
             }
-            else {
-                throw new Error("The number of parameters is incorrect");
+            const block = func.block;
+            const element = block.interpreter(newEnv);
+            if (element != null || element != undefined) {
+                if (element.type == 'return' && func.type == element.typeValue) {
+                    return { value: element.value, type: func.type };
+                }
+                else {
+                    throw Error(`Error: Type [${element.value}] is not valid for [Function] code`);
+                }
             }
         }
         return { value: null, type: Result_1.dataType.NULL };

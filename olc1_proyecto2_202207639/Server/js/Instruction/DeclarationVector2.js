@@ -11,7 +11,7 @@ class DeclarationVector2 extends Instruction_1.Instruction {
         this.values = values;
         this.simple = simple;
     }
-    interpreter(environment, tConsole) {
+    interpreter(environment) {
         var _a, _b, _c, _d;
         let dominantType;
         let defaultVal;
@@ -41,9 +41,9 @@ class DeclarationVector2 extends Instruction_1.Instruction {
         }
         if (this.simple) {
             if (!(this.values[0] instanceof Array)) {
-                const maxColumns = this.values.length;
-                const maxRows = 1;
-                environment.saveVectors(this.id, dominantType, maxColumns, maxRows, this.line, this.column);
+                const maxColumns = 1;
+                const maxRows = this.values.length;
+                environment.saveVectors(this.id, dominantType, maxRows, maxColumns, this.line, this.column);
                 (_a = environment.getVectors(this.id)) === null || _a === void 0 ? void 0 : _a.defaultValues("VectorV", dominantType, defaultVal, this.line, this.column);
                 for (let i = 0; i < this.values.length; i++) {
                     const exp = this.values[i];
@@ -63,13 +63,13 @@ class DeclarationVector2 extends Instruction_1.Instruction {
         else {
             if (this.values[0] instanceof Array) {
                 const maxRows = this.values.length;
-                const maxColumns = Math.max(...this.values.map(fila => fila instanceof Array ? fila.length : 0));
+                const maxColumns = Math.max(...this.values.map(columns => columns instanceof Array ? columns.length : 0));
                 environment.saveVectors(this.id, dominantType, maxRows, maxColumns, this.line, this.column);
                 (_c = environment.getVectors(this.id)) === null || _c === void 0 ? void 0 : _c.defaultValues("VectorV", dominantType, defaultVal, this.line, this.column);
                 for (let i = 0; i < this.values.length; i++) {
-                    const row = this.values[i];
-                    for (let j = 0; j < row.length; j++) {
-                        const exp = row[j];
+                    const columns = this.values[i];
+                    for (let j = 0; j < columns.length; j++) {
+                        const exp = columns[j];
                         const value = exp.interpreter(environment);
                         if (value.type == dominantType) {
                             (_d = environment.getVectors(this.id)) === null || _d === void 0 ? void 0 : _d.setValue(i, j, "VectorV", dominantType, value.value, this.line, this.column);

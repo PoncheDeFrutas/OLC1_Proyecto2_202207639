@@ -11,12 +11,12 @@ class For extends Instruction_1.Instruction {
         this.increment = increment;
         this.block = block;
     }
-    interpreter(environment, tConsole) {
+    interpreter(environment) {
         const newEnv = new Environment_1.Environment(environment);
-        this.variable.interpreter(newEnv, tConsole);
+        this.variable.interpreter(newEnv);
         let condition = this.condition.interpreter(newEnv);
         while (condition.value) {
-            const element = this.block.interpreter(newEnv, tConsole);
+            const element = this.block.interpreter(newEnv);
             if (element != null || element != undefined) {
                 if (element.type == 'break') {
                     break;
@@ -25,7 +25,7 @@ class For extends Instruction_1.Instruction {
                     throw Error(`Error: Type [${element.type}] is not valid for [For] code`);
                 }
             }
-            this.increment.interpreter(newEnv, tConsole);
+            this.increment.interpreter(newEnv);
             condition = this.condition.interpreter(newEnv);
         }
     }

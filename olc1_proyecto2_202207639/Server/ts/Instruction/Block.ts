@@ -9,12 +9,12 @@ export class Block extends Instruction {
         this.instructions = instructions
     }
 
-    public interpreter(environment: Environment, tConsole: string[]): any {
+    public interpreter(environment: Environment): any {
         const newEnv = new Environment(environment)
 
         for (const instruction of this.instructions) {
             try{
-                const element = instruction.interpreter(newEnv, tConsole)
+                const element = instruction.interpreter(newEnv)
                 if (element != null || element != undefined){
                     return element;
                 }

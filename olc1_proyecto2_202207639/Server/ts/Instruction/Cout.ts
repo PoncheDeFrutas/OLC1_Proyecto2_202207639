@@ -1,7 +1,8 @@
 import { Expression } from "../Abstract/Expression";
 import { dataType } from "../Abstract/Result";
 import { Instruction } from "../Abstract/Instruction";
-import {Environment} from "../Symbol/Environment";
+import { Environment } from "../Symbol/Environment";
+import { tConsole } from "../tConsole";
 
 export class Cout extends Instruction {
     private exp: Expression;
@@ -13,8 +14,12 @@ export class Cout extends Instruction {
         this.jump = jump;
     }
 
-    public interpreter(environment: Environment, tConsole:string[]): null {
+    public interpreter(environment: Environment): null {
         const res = this.exp.interpreter(environment)
+
+        if (res == undefined){
+            throw new Error("Error en Cout")
+        }
 
         if(res.type == dataType.BOOL) {
             res.value = res.value ? "true" : "false"

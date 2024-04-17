@@ -1,1 +1,1 @@
-export let tConsole: string[]
+export let tConsole: string[] = []

@@ -12,10 +12,10 @@ export class Case extends Instruction{
         this.instructions = instructions
     }
 
-    public interpreter(environment: Environment, tConsole: string[]): any{
+    public interpreter(environment: Environment): any{
         for (const instruction of this.instructions) {
             try{
-                const element = instruction.interpreter(environment, tConsole)
+                const element = instruction.interpreter(environment)
                 if (element != null || element != undefined){
                     return element;
                 }

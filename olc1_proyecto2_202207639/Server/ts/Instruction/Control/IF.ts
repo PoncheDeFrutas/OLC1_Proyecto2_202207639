@@ -16,15 +16,15 @@ export class FN_IF extends Instruction {
         this.blockElse = blockElse
     }
 
-    public interpreter(environment: Environment, tConsole: string[]): any {
+    public interpreter(environment: Environment): any {
         const condition = this.condition.interpreter(environment)
         if (condition.type != dataType.BOOL) {
             throw Error("Error: Type mismatch")
         }
         if (condition.value) {
-            return this.blockIf.interpreter(environment, tConsole)
+            return this.blockIf.interpreter(environment)
         } else if(this.blockElse != null){
-            return this.blockElse.interpreter(environment, tConsole)
+            return this.blockElse.interpreter(environment)
         }
         return null
     }

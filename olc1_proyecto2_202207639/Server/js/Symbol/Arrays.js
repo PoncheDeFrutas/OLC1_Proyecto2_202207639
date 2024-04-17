@@ -32,5 +32,8 @@ class Arrays {
             }
         }
     }
+    setVector(vector) {
+        this.values = vector;
+    }
 }
 exports.Arrays = Arrays;

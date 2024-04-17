@@ -22,7 +22,7 @@ export class DeclarationVector extends Instruction{
         this.simple = simple;
     }
 
-    public interpreter(environment: Environment, tConsole: string[]): any {
+    public interpreter(environment: Environment): any {
 
         if (this.confirmType != this.type){
             throw new Error(`Type Error: ${this.confirmType} is not assignable to ${this.type}`)

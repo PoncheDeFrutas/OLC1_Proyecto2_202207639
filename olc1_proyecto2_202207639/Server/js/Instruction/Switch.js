@@ -10,7 +10,7 @@ class Switch extends Instruction_1.Instruction {
         this.Cases = Cases;
         this.Default = Default;
     }
-    interpreter(environment, tConsole) {
+    interpreter(environment) {
         if (this.Cases == null && this.Default == null) {
             throw Error("Error: No [Cases] or [Default] code");
         }
@@ -21,7 +21,7 @@ class Switch extends Instruction_1.Instruction {
             for (const Case of this.Cases) {
                 const element = Case.condition.interpreter(newEnv);
                 if (element.value == condition.value && element.type == condition.type && !value) {
-                    const result = Case.interpreter(newEnv, tConsole);
+                    const result = Case.interpreter(newEnv);
                     if (result != null || result != undefined) {
                         if (result.type == 'break') {
                             break;
@@ -33,7 +33,7 @@ class Switch extends Instruction_1.Instruction {
                     value = true;
                 }
                 else if (value) {
-                    const result = Case.interpreter(newEnv, tConsole);
+                    const result = Case.interpreter(newEnv);
                     if (result != null || result != undefined) {
                         if (result.type == 'break') {
                             value = false;
@@ -46,7 +46,7 @@ class Switch extends Instruction_1.Instruction {
                 }
             }
             if (this.Default != null && value) {
-                const result = this.Default.interpreter(newEnv, tConsole);
+                const result = this.Default.interpreter(newEnv);
                 if (result != null || result != undefined) {
                     if (result.type == 'break') {
                         return;
@@ -58,7 +58,7 @@ class Switch extends Instruction_1.Instruction {
             }
         }
         if (this.Default != null && !value) {
-            const result = this.Default.interpreter(newEnv, tConsole);
+            const result = this.Default.interpreter(newEnv);
             if (result != null || result != undefined) {
                 if (result.type == 'break') {
                     return;

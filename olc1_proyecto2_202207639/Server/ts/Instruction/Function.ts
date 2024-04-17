@@ -8,10 +8,10 @@ export class Function extends Instruction{
     public stype: string;
     public type: dataType;
     public id: string;
-    public parameters: Array<Instruction>;
+    public parameters: {type:string, id:string, vector:boolean, simple:boolean}[];
     public block: Block;
 
-    constructor(stype: string, id: string, parameters: Array<Instruction>, block: Block, line: number, column: number){
+    constructor(stype: string, id: string, parameters: {type:string, id:string,vector:boolean, simple:boolean}[], block: Block, line: number, column: number){
         super(line, column);
         this.type = dataType.NULL;
         this.id = id;
@@ -20,7 +20,7 @@ export class Function extends Instruction{
         this.stype = stype;
     }
 
-    public interpreter(environment: Environment, tConsole: string[]): any {
+    public interpreter(environment: Environment): any {
         let dominantType: dataType;
         switch (this.stype) {
             case "int":

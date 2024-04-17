@@ -2,6 +2,7 @@ import { env } from "process";
 import { Expression } from "./Abstract/Expression";
 import { Instruction } from "./Abstract/Instruction";
 import { Environment } from "./Symbol/Environment";
+import { tConsole} from "./tConsole";
 
 export class AST {
     public instructions: Instruction[]
@@ -15,9 +16,11 @@ export class AST {
     }
 
     public Execute(){
+        tConsole.length = 0
         this.instructions.forEach(instruction => {
-            instruction.interpreter(this.global, this.tConsole)
+            instruction.interpreter(this.global)
         });
+        this.tConsole = tConsole
     }
 
     public getConsole(){

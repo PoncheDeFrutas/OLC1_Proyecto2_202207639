@@ -8,7 +8,7 @@ class newValue extends Instruction_1.Instruction {
         this.id = id;
         this.value = value;
     }
-    interpreter(environment, tConsole) {
+    interpreter(environment) {
         const val = environment.getVariable(this.id);
         if (val == null) {
             throw new Error(`Variable ${this.id} doesn't exist`);

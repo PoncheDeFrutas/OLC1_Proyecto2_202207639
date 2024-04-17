@@ -9,7 +9,7 @@ class IncDecFunction extends Instruction_1.Instruction {
         this.id = id;
         this.IncDec = IncDec;
     }
-    interpreter(environment, tConsole) {
+    interpreter(environment) {
         var _a, _b, _c, _d;
         const value = environment.getVariable(this.id);
         if (value == null) {

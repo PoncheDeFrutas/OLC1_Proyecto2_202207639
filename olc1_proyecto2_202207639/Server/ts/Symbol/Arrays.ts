@@ -40,4 +40,8 @@ export class Arrays{
             }
         }
     }
+
+    public setVector(vector: Symbol[][]){
+        this.values = vector;
+    }
 }

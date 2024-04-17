@@ -11,7 +11,7 @@ class newVectorValue extends Instruction_1.Instruction {
         this.y = y;
         this.value = value;
     }
-    interpreter(environment, tConsole) {
+    interpreter(environment) {
         var _a, _b;
         const vector = environment.getVectors(this.id);
         const value = this.value.interpreter(environment);
