@@ -7,10 +7,10 @@ export class DeclarationVector2 extends Instruction{
 
     public type: string;
     public id: string;
-    public values: Expression[] | Expression[][];
+    public values: Expression | Expression[] | Expression[][];
     public simple: boolean;
 
-    constructor(type: string, id: string, values: Expression[] | Expression[][], simple: boolean, line: number, column: number){
+    constructor(type: string, id: string, values: Expression | Expression[] | Expression[][], simple: boolean, line: number, column: number){
         super(line, column);
         this.type = type;
         this.id = id;
@@ -48,8 +48,7 @@ export class DeclarationVector2 extends Instruction{
             default:
                 throw Error("Error: Type not valid")
         }
-
-        if (this.simple){
+        if (this.simple && !(this.values instanceof Expression)){
             if(!(this.values[0] instanceof Array)){
                 const maxColumns = 1;
                 const maxRows = this.values.length;
@@ -67,7 +66,7 @@ export class DeclarationVector2 extends Instruction{
             } else{
                 throw Error("Error: Type not valid")
             }
-        } else{
+        } else if(!(this.values instanceof Expression)){
             if (this.values[0] instanceof Array){
                 const maxRows = this.values.length;
                 const maxColumns = Math.max(...this.values.map(columns => columns instanceof Array ? columns.length : 0));
@@ -85,6 +84,19 @@ export class DeclarationVector2 extends Instruction{
                         }
                     }
                 }
+            }
+        } else {
+            const exp = this.values.interpreter(environment)
+            const tmp = exp.value;
+            environment.saveVectors(this.id, dominantType, tmp.length, 1, this.line, this.column);
+            for (let i = 0; i < tmp.length; i++){
+                const value = tmp[i].interpreter(environment);
+                if (value.type == dominantType){
+                    environment.getVectors(this.id)?.setValue(i, 0, "VectorV", dominantType, value.value, this.line, this.column);
+                } else{
+                    throw Error("Error: Value type not valid")
+                }
+
             }
         }
     }

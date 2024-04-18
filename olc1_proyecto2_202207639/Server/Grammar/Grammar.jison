@@ -9,7 +9,10 @@
     const { toLowUp } = require('../js/Expression/toLowUp');
     const { Round } = require('../js/Expression/Round');
     const { ToString } = require('../js/Expression/ToString');
+    const { Length } = require('../js/Expression/Length');
+    const { Typeof } = require('../js/Expression/Typeof')
     const { VectorValue } = require('../js/Expression/VectorValue');
+    const { C_str } = require('../js/Expression/C_str');
     const { ArithmeticOp, RelationalOp, LogicalOp, Result, dataType } = require('../js/Abstract/Result');
     const { Cout } = require('../js/Instruction/Cout');
     const { Block } = require('../js/Instruction/Block');
@@ -94,6 +97,15 @@
 /*Functions*/
 "void" {return 'VOID';}
 
+/*Length*/
+"length" {return 'LENGTH'}
+
+/*Typeof*/
+"typeof" {return 'TYPEOF'}
+
+/*C_str*/
+"c_str" {return 'C_STR'}
+
 /*Incremental and Decremental*/
 "++"    {return 'INC';}
 "--"    {return 'DEC';}
@@ -120,6 +132,7 @@
 "!"     {return 'NOT';}
 
 /*Punctuation*/
+"."     {return 'DOT';}
 ","     {return 'COMMA';}
 "("     {return 'LPAREN';}
 ")"     {return 'RPAREN';}
@@ -150,7 +163,7 @@
 /lex
 
 /*Precedence------------*/
-
+%right 'DOT'
 %right 'TYPE'
 %right 'TERNARY'
 %left 'OR'
@@ -291,8 +304,23 @@ expression
     | ToString                      { $$ = $1; }
     | data_type                     { $$ = $1; }
     | function_value                { $$ = $1; }
+    | length                        { $$ = $1; }
+    | typeof                        { $$ = $1; }
     | LPAREN expression RPAREN      { $$ = $2; }
     ;
+
+C_str
+    : expression DOT C_STR LPAREN RPAREN { $$ = new C_str($1, @3.first_line, @3.first_column); }
+    ;
+
+typeof
+    : TYPEOF LPAREN expression RPAREN { $$ = new Typeof($3, @1.first_line, @1.first_column) }
+    ;
+
+length
+    : expression DOT LENGTH LPAREN RPAREN   { $$ = new Length($1, @3.first_line, @3.first_column); }
+    ;
+
 
 operations
     : RES expression %prec UMINUS   { $$ = new Arithmetic($2, $2, ArithmeticOp.UMINUS, @1.first_line, @1.first_column); }
@@ -374,13 +402,18 @@ vectors
 vectors_declaration
     : TYPE ID LBRACKET RBRACKET ASSIGN NEW TYPE LBRACKET expression RBRACKET  { $$ = new DeclarationVector($1, $2, $7, $9, null, true, @1.first_line, @1.first_column); }
     | TYPE ID LBRACKET RBRACKET LBRACKET RBRACKET ASSIGN NEW TYPE LBRACKET expression RBRACKET LBRACKET expression RBRACKET  { $$ = new DeclarationVector($1, $2, $9, $11, $14, false, @1.first_line, @1.first_column); }
-    | TYPE ID LBRACKET RBRACKET ASSIGN LBRACKET value_list RBRACKET  { $$ = new DeclarationVector2($1, $2, $7, true, @1.first_line, @1.first_column); }
+    | TYPE ID LBRACKET RBRACKET ASSIGN vector_assignation  { $$ = new DeclarationVector2($1, $2, $6, true, @1.first_line, @1.first_column); }
     | TYPE ID LBRACKET RBRACKET LBRACKET RBRACKET ASSIGN LBRACKET list_value_list RBRACKET  { $$ = new DeclarationVector2($1, $2, $9, false, @1.first_line, @1.first_column); }
     ;
 
 vector_modification
     : ID LBRACKET expression RBRACKET ASSIGN expression SEMICOLON { $$ = new newVectorValue($1, $3, null, $6, @1.first_line, @1.first_column); }
     | ID LBRACKET expression RBRACKET LBRACKET expression RBRACKET ASSIGN expression SEMICOLON  { $$ = new newVectorValue($1, $3, $6, $9, @1.first_line, @1.first_column); }
+    ;
+
+vector_assignation
+    : C_str                                            { $$ = $1; }
+    | LBRACKET value_list RBRACKET                      { $$ = $2; }
     ;
 
 list_value_list

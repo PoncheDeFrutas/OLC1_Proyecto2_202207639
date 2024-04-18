@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeclarationVector2 = void 0;
 const Instruction_1 = require("../Abstract/Instruction");
+const Expression_1 = require("../Abstract/Expression");
 const Result_1 = require("../Abstract/Result");
 class DeclarationVector2 extends Instruction_1.Instruction {
     constructor(type, id, values, simple, line, column) {
@@ -12,7 +13,7 @@ class DeclarationVector2 extends Instruction_1.Instruction {
         this.simple = simple;
     }
     interpreter(environment) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e;
         let dominantType;
         let defaultVal;
         switch (this.type) {
@@ -39,7 +40,7 @@ class DeclarationVector2 extends Instruction_1.Instruction {
             default:
                 throw Error("Error: Type not valid");
         }
-        if (this.simple) {
+        if (this.simple && !(this.values instanceof Expression_1.Expression)) {
             if (!(this.values[0] instanceof Array)) {
                 const maxColumns = 1;
                 const maxRows = this.values.length;
@@ -60,7 +61,7 @@ class DeclarationVector2 extends Instruction_1.Instruction {
                 throw Error("Error: Type not valid");
             }
         }
-        else {
+        else if (!(this.values instanceof Expression_1.Expression)) {
             if (this.values[0] instanceof Array) {
                 const maxRows = this.values.length;
                 const maxColumns = Math.max(...this.values.map(columns => columns instanceof Array ? columns.length : 0));
@@ -78,6 +79,20 @@ class DeclarationVector2 extends Instruction_1.Instruction {
                             throw Error("Error: Value type not valid");
                         }
                     }
+                }
+            }
+        }
+        else {
+            const exp = this.values.interpreter(environment);
+            const tmp = exp.value;
+            environment.saveVectors(this.id, dominantType, tmp.length, 1, this.line, this.column);
+            for (let i = 0; i < tmp.length; i++) {
+                const value = tmp[i].interpreter(environment);
+                if (value.type == dominantType) {
+                    (_e = environment.getVectors(this.id)) === null || _e === void 0 ? void 0 : _e.setValue(i, 0, "VectorV", dominantType, value.value, this.line, this.column);
+                }
+                else {
+                    throw Error("Error: Value type not valid");
                 }
             }
         }

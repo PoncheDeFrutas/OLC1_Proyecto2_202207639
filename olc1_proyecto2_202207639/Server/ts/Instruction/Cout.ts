@@ -20,10 +20,6 @@ export class Cout extends Instruction {
         if (res == undefined){
             throw new Error("Error en Cout")
         }
-
-        if(res.type == dataType.BOOL) {
-            res.value = res.value ? "true" : "false"
-        }
         if (this.jump){
             tConsole.push(res.value+"\n")
         } else{
