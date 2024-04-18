@@ -9,7 +9,7 @@ class Return extends Instruction_1.Instruction {
     }
     interpreter(environment) {
         const value = this.exp.interpreter(environment);
-        return { line: this.line, column: this.column, type: "return", value: value.value, typeValue: value.type };
+        return { line: this.line, column: this.column, typeValue: "return", value: value.value, type: value.type };
     }
 }
 exports.Return = Return;

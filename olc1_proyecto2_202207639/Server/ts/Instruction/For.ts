@@ -26,6 +26,8 @@ export class For extends Instruction{
             if (element != null || element != undefined) {
                 if (element.type == 'break') {
                     break;
+                } else if (element.typeValue == 'return') {
+                    return element;
                 } else{
                     throw Error(`Error: Type [${element.type}] is not valid for [For] code`);
                 }

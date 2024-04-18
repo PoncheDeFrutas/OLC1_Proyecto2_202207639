@@ -26,6 +26,9 @@ class Switch extends Instruction_1.Instruction {
                         if (result.type == 'break') {
                             break;
                         }
+                        else if (result.typeValue == 'return') {
+                            return result;
+                        }
                         else {
                             throw Error(`Error: Type [${result.type}] is not valid for [Case] code`);
                         }
@@ -39,6 +42,9 @@ class Switch extends Instruction_1.Instruction {
                             value = false;
                             break;
                         }
+                        else if (result.typeValue == 'return') {
+                            return result;
+                        }
                         else {
                             throw Error(`Error: Type [${result.type}] is not valid for [Case] code`);
                         }
@@ -51,6 +57,9 @@ class Switch extends Instruction_1.Instruction {
                     if (result.type == 'break') {
                         return;
                     }
+                    else if (result.typeValue == 'return') {
+                        return result;
+                    }
                     else {
                         throw Error(`Error: Type [${result.type}] is not valid for [Case] code`);
                     }
@@ -62,6 +71,9 @@ class Switch extends Instruction_1.Instruction {
             if (result != null || result != undefined) {
                 if (result.type == 'break') {
                     return;
+                }
+                else if (result.typeValue == 'return') {
+                    return result;
                 }
                 else {
                     throw Error(`Error: Type [${result.type}] is not valid for [Case] code`);

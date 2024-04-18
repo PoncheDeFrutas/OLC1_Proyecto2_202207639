@@ -82,7 +82,7 @@ class FunctionValue extends Instruction_1.Instruction {
             const block = func.block;
             const element = block.interpreter(newEnv);
             if (element != null || element != undefined) {
-                if (element.type == 'return' && func.type == element.typeValue) {
+                if (element.typeValue == 'return' && func.type == element.type) {
                     return { value: element.value, type: func.type };
                 }
                 else {

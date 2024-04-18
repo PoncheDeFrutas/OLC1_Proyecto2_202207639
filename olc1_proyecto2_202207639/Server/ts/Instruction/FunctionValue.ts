@@ -80,7 +80,7 @@ export class FunctionValue extends Instruction {
             const block:Block = func.block;
             const element = block.interpreter(newEnv);
             if (element != null || element != undefined) {
-                if (element.type == 'return' && func.type == element.typeValue) {
+                if (element.typeValue == 'return' && func.type == element.type) {
                     return {value: element.value, type: func.type};
                 } else {
                     throw Error(`Error: Type [${element.value}] is not valid for [Function] code`);

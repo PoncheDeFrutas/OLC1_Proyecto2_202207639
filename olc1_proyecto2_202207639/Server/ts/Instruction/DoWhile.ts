@@ -22,6 +22,8 @@ export class DoWhile extends Instruction {
                     break;
                 } else if (element.type == 'continue') {
                     continue;
+                } else if (element.typeValue == 'return') {
+                    return element;
                 } else {
                     throw Error(`Error: Type [${element.type}] is not valid for [Do While] code`);
                 }

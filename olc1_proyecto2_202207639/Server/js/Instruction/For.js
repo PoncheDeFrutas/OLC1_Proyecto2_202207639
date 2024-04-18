@@ -21,6 +21,9 @@ class For extends Instruction_1.Instruction {
                 if (element.type == 'break') {
                     break;
                 }
+                else if (element.typeValue == 'return') {
+                    return element;
+                }
                 else {
                     throw Error(`Error: Type [${element.type}] is not valid for [For] code`);
                 }
