@@ -14,6 +14,9 @@ class Block extends Instruction_1.Instruction {
             try {
                 const element = instruction.interpreter(newEnv);
                 if (element != null || element != undefined) {
+                    if (element.type == 'continue') {
+                        continue;
+                    }
                     return element;
                 }
             }
@@ -21,6 +24,7 @@ class Block extends Instruction_1.Instruction {
                 console.log(error);
             }
         }
+        return null;
     }
 }
 exports.Block = Block;

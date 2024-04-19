@@ -16,6 +16,7 @@
     const { ArithmeticOp, RelationalOp, LogicalOp, Result, dataType } = require('../js/Abstract/Result');
     const { Cout } = require('../js/Instruction/Cout');
     const { Block } = require('../js/Instruction/Block');
+    const { execute } = require('../js/Instruction/execute');
     const { Declaration } = require('../js/Instruction/Declaration');
     const { DeclarationVector } = require('../js/Instruction/DeclarationVector');
     const { DeclarationVector2 } = require('../js/Instruction/DeclarationVector2');
@@ -39,8 +40,7 @@
 %}
 /*------------------------------------------------LEXICAL ANALYZER----------------------------------------------------*/
 %lex
-%options case-insensitive
-
+%options flex case-insensitive
 
 %%
 
@@ -106,6 +106,10 @@
 /*C_str*/
 "c_str" {return 'C_STR'}
 
+/*Execute*/
+"execute" {return 'EXECUTE'}
+
+
 /*Incremental and Decremental*/
 "++"    {return 'INC';}
 "--"    {return 'DEC';}
@@ -163,7 +167,6 @@
 /lex
 
 /*Precedence------------*/
-%right 'DOT'
 %right 'TYPE'
 %right 'TERNARY'
 %left 'OR'
@@ -174,11 +177,9 @@
 %left 'MOD', 'DIV', 'MUL'
 %nonassoc 'POW'
 %right UMINUS
-
-
+%right 'DOT'
 /*-----------------------------------------------SINTACTIC ANALYZER---------------------------------------------------*/
 %start program
-
 %%
 
 program
@@ -197,6 +198,11 @@ statement
     | increment_decrement SEMICOLON                         { $$ = $1; }
     | transfer_sentence                                     { $$ = $1; }
     | general_functions                                     { $$ = $1; }
+    | execute                                               { $$ = $1; }
+    ;
+
+execute
+    : EXECUTE function_value SEMICOLON                      { $$ = new execute($2, @1.first_line, @1.first_column); }
     ;
 
 
@@ -256,6 +262,7 @@ fn_DoWhile
 
 transfer_sentence
     : RETURN expression SEMICOLON                           { $$ = new Return($2, @1.first_line, @1.first_column); }
+    | RETURN  SEMICOLON                                     { $$ = new Return(null, @1.first_line, @1.first_column); }
     | BREAK SEMICOLON                                       { $$ = new Break(@1.first_line, @1.first_column);}
     | CONTINUE SEMICOLON                                    { $$ = new Continue(@1.first_line, @1.first_column);}
     ;
@@ -429,7 +436,7 @@ value_list:
 general_functions
     : function_declaration      { $$ = $1 }
     | method_declaration        { $$ = $1 }
-    | function_value  SEMICOLON          { $$ = $1 }
+    | function_value2  SEMICOLON          { $$ = $1 }
     ;
 
 
@@ -452,7 +459,11 @@ non_empty_value_list
     ;
 
 function_value
-    : ID LPAREN value_list2 RPAREN { $$ = new FunctionValue($1, $3, @1.first_line, @1.first_column); }
+    : ID LPAREN value_list2 RPAREN { $$ = new FunctionValue($1, $3, true,@1.first_line, @1.first_column); }
+    ;
+
+function_value2
+    : ID LPAREN value_list2 RPAREN { $$ = new FunctionValue($1, $3, false,@1.first_line, @1.first_column); }
     ;
 
 parameter_cases

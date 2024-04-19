@@ -19,7 +19,6 @@ export class C_str extends Expression{
         }
         const array:Expression[] = [];
         const word  = <string>result.value
-        console.log(word)
         for (let i = 0; i < word.length; i++){
             array.push(new Primitive(result.value[i], dataType.CHAR, this.line, this.column))
         }

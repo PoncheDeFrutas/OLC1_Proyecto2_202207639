@@ -18,8 +18,6 @@ export class DeclarationVector2 extends Instruction{
         this.simple = simple;
     }
 
-
-
     public interpreter(environment: Environment): any {
         let dominantType: dataType;
         let defaultVal: any;
@@ -96,7 +94,6 @@ export class DeclarationVector2 extends Instruction{
                 } else{
                     throw Error("Error: Value type not valid")
                 }
-
             }
         }
     }

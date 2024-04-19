@@ -5,10 +5,11 @@ const Result_1 = require("../Abstract/Result");
 const Environment_1 = require("../Symbol/Environment");
 const Instruction_1 = require("../Abstract/Instruction");
 class FunctionValue extends Instruction_1.Instruction {
-    constructor(id, parameters, line, column) {
+    constructor(id, parameters, enable, line, column) {
         super(line, column);
         this.id = id;
         this.parameters = parameters;
+        this.enable = enable;
     }
     interpreter(environment) {
         var _a, _b;
@@ -81,16 +82,35 @@ class FunctionValue extends Instruction_1.Instruction {
             }
             const block = func.block;
             const element = block.interpreter(newEnv);
-            if (element != null || element != undefined) {
+            if ((element != null || element != undefined) && this.enable) {
                 if (element.typeValue == 'return' && func.type == element.type) {
                     return { value: element.value, type: func.type };
                 }
+                if (element.type == 'break') {
+                    return { value: null, type: Result_1.dataType.NULL };
+                }
+                else if (element.type == 'continue') {
+                    return { value: null, type: Result_1.dataType.NULL };
+                }
+                else if (func.type == element.type && element.value == null) {
+                    return { value: null, type: Result_1.dataType.NULL };
+                }
                 else {
-                    throw Error(`Error: Type [${element.value}] is not valid for [Function] code`);
+                    throw Error(`Error: Type [${element.type}] is not valid for [Function] code`);
+                }
+            }
+            else {
+                if (func.type == Result_1.dataType.NULL) {
+                    return null;
+                }
+                else {
+                    throw Error(`Error: Type [${element.type}] is not valid for [Function] code`);
                 }
             }
         }
-        return { value: null, type: Result_1.dataType.NULL };
+        else {
+            throw new Error(`Error: Function does not exist ${this.id}`);
+        }
     }
 }
 exports.FunctionValue = FunctionValue;

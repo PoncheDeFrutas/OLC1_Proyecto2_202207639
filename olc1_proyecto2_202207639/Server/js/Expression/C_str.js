@@ -16,7 +16,6 @@ class C_str extends Expression_1.Expression {
         }
         const array = [];
         const word = result.value;
-        console.log(word);
         for (let i = 0; i < word.length; i++) {
             array.push(new Primitive_1.Primitive(result.value[i], Result_1.dataType.CHAR, this.line, this.column));
         }

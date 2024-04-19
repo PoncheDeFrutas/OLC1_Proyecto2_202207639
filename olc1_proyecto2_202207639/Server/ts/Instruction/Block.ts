@@ -16,11 +16,15 @@ export class Block extends Instruction {
             try{
                 const element = instruction.interpreter(newEnv)
                 if (element != null || element != undefined){
+                    if (element.type == 'continue') {
+                        continue;
+                    }
                     return element;
                 }
             } catch (error){
                 console.log(error)
             }
         }
+        return null;
     }
 }

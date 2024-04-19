@@ -30,7 +30,7 @@ app.use(cors())
 app.use(express.json())
 app.post('/interpreter', (req:Request, res:Response) => {
     const content = req.body.content
-    const result = interpreter(content.toLowerCase())
+    const result = interpreter(content)
     res.json({result: result})
 })
 
