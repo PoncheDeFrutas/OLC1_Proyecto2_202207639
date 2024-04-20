@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Casting = void 0;
 const Expression_1 = require("../Abstract/Expression");
 const Result_1 = require("../Abstract/Result");
+const tConsole_1 = require("../tConsole");
+const Error_1 = require("../Error");
 class Casting extends Expression_1.Expression {
     constructor(type, value, line, column) {
         super(line, column);
@@ -25,7 +27,7 @@ class Casting extends Expression_1.Expression {
                         result = { value: value.value.charCodeAt(0), type: Result_1.dataType.NUMBER };
                         break;
                     default:
-                        throw Error("Error: Type mismatch");
+                        throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${value.type} no casteable a int`, this.line, this.column));
                 }
                 break;
             case "double":
@@ -40,7 +42,7 @@ class Casting extends Expression_1.Expression {
                         result = { value: value.value.charCodeAt(0).toFixed(1), type: Result_1.dataType.DOUBLE };
                         break;
                     default:
-                        throw Error("Error: Type mismatch");
+                        throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${value.type} no casteable a double`, this.line, this.column));
                 }
                 break;
             case "char":
@@ -48,7 +50,7 @@ class Casting extends Expression_1.Expression {
                     result = { value: String.fromCharCode(value.value), type: Result_1.dataType.CHAR };
                 }
                 else {
-                    throw new Error("Error: Type mismatch");
+                    throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${value.type} no casteable a char`, this.line, this.column));
                 }
                 break;
             case "std::string":
@@ -56,11 +58,11 @@ class Casting extends Expression_1.Expression {
                     result = { value: value.value.toString(), type: Result_1.dataType.STRING };
                 }
                 else {
-                    throw new Error("Error: Type mismatch");
+                    throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${value.type} no casteable a string`, this.line, this.column));
                 }
                 break;
             default:
-                throw new Error("Error: Type not valid");
+                throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Opción casteable no valida ${this.type}`, this.line, this.column));
         }
         return result;
     }

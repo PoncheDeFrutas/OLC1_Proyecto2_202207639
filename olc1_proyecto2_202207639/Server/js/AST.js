@@ -12,10 +12,12 @@ class AST {
     constructor(instructions) {
         this.instructions = instructions;
         this.tConsole = [];
+        this.tError = [];
         this.global = new Environment_1.Environment(null);
     }
     Execute() {
         tConsole_1.tConsole.length = 0;
+        tConsole_1.tError.length = 0;
         this.instructions.forEach(instruction => {
             if (instruction instanceof Function_1.Function || instruction instanceof Declaration_1.Declaration ||
                 instruction instanceof DeclarationVector_1.DeclarationVector || instruction instanceof DeclarationVector2_1.DeclarationVector2) {
@@ -29,11 +31,15 @@ class AST {
             }
         }
         this.tConsole = tConsole_1.tConsole;
+        this.tError = tConsole_1.tError;
     }
     getConsole() {
         let exit = "";
         for (let index = 0; index < this.tConsole.length; index++) {
             exit += this.tConsole[index].toString();
+        }
+        for (let index = 0; index < this.tError.length; index++) {
+            exit += this.tError[index].toString() + "\n";
         }
         return exit.replace("\\n", "\n").replace("\\t", "\t").replace("\\\"", "\"").replace("\\\'", "\'").replace("\\", "\\");
     }

@@ -2,6 +2,8 @@ import { Instruction } from "../Abstract/Instruction";
 import { Environment } from "../Symbol/Environment";
 import { Expression } from "../Abstract/Expression";
 import { dataType } from "../Abstract/Result";
+import {tError} from "../tConsole";
+import {Error_} from "../Error";
 
 export class DoWhile extends Instruction {
 
@@ -12,7 +14,9 @@ export class DoWhile extends Instruction {
     public interpreter(env: Environment): any {
         let condition = this.condition.interpreter(env);
         if (condition.type != dataType.BOOL) {
-            throw Error(`Error: Type [${condition.type}] is not valid for [While] condition`);
+            throw tError.push(new Error_(tError.length, "Semantico",
+                `Tipo ${condition.type} no es valido para condicon [Do While]`, this.line, this.column ))
+
         }
 
         do {
@@ -25,12 +29,15 @@ export class DoWhile extends Instruction {
                 } else if (element.typeValue == 'return') {
                     return element;
                 } else {
-                    throw Error(`Error: Type [${element.type}] is not valid for [Do While] code`);
+                    throw tError.push(new Error_(tError.length, "Semantico",
+                        `Tipo ${element.type} no es valido para returno [Do While]`, this.line, this.column ))
+
                 }
             }
             condition = this.condition.interpreter(env);
             if (condition.type != dataType.BOOL) {
-                throw Error(`Error: Type [${condition.type}] is not valid for [Do While] condition`);
+                throw tError.push(new Error_(tError.length, "Semantico",
+                    `Tipo ${condition.type} no es valido para condion [Do While]`, this.line, this.column ))
             }
         } while (condition.value);
     }

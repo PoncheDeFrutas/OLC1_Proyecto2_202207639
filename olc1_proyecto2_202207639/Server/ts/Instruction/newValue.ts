@@ -2,6 +2,8 @@ import {Instruction} from '../Abstract/Instruction';
 import {Expression} from '../Abstract/Expression';
 import {Environment} from '../Symbol/Environment';
 import {dataType} from '../Abstract/Result';
+import {tError} from "../tConsole";
+import {Error_} from "../Error";
 
 export class newValue extends Instruction {
 
@@ -19,37 +21,44 @@ export class newValue extends Instruction {
         if (val == null) {
             const vector = environment.getVectors(this.id);
             if (vector == null) {
-                throw new Error(`Variable ${this.id} doesn't exist`)
+                throw tError.push(new Error_(tError.length, "Semantico",
+                    `La variable ${this.id} no existe`, this.line, this.column))
             } else {
                 if (this.value != null) {
                     const value = this.value.interpreter(environment);
                     if (value.type != dataType.ID){
-                        throw new Error(`Type Error: ${value.type} is not assignable to ${dataType.ID}`)
+                        throw tError.push(new Error_(tError.length, "Semantico",
+                            `Tipo ${value.type} no es asignable a ${dataType.ID}`, this.line, this.column))
                     } else {
                         const vector2 = environment.getVectors(value.value);
                         if (vector2 == null) {
-                            throw new Error(`Vector ${value.value} doesn't exist`)
+                            throw tError.push(new Error_(tError.length, "Semantico",
+                                `Vector ${value.value} no existe`, this.line, this.column))
                         } else {
                             if (vector.values.length != vector2.values.length || vector.values[0].length != vector2.values[0].length) {
-                                throw new Error("Error: The vectors have different dimensions")
+                                throw tError.push(new Error_(tError.length, "Semantico",
+                                    `Vector ${vector2.id} no tiene las mismas dimensiones que ${vector.id}`, this.line, this.column))
                             } else{
                                 environment.getVectors(this.id)?.setVector(vector2.values);
                             }
                         }
                     }
                 } else {
-                    throw new Error("Error: Value can't be null");
+                    throw tError.push(new Error_(tError.length, "Semantico",
+                        `El valor de asignación no puede ser nulo`, this.line, this.column))
                 }
             }
         } else{
             if (this.value != null) {
                 const value = this.value.interpreter(environment);
                 if (val.type != value.type) {
-                    throw new Error(`Type Error: ${value.type} is not assignable to ${val.type}`)
+                    throw tError.push(new Error_(tError.length, "Semantico",
+                        `Tipo ${value.type} no es asignable a ${val.type}`, this.line, this.column))
                 }
                 environment.editVariable(this.id, value.value, value.type, val.line, val.column);
             } else {
-                throw new Error("Error: Value can't be null");
+                throw tError.push(new Error_(tError.length, "Semantico",
+                    `El valor de asignación no puede ser nulo`, this.line, this.column))
             }
         }
         return null

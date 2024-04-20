@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Relational = void 0;
 const Expression_1 = require("../Abstract/Expression");
 const Result_1 = require("../Abstract/Result");
+const tConsole_1 = require("../tConsole");
+const Error_1 = require("../Error");
 class Relational extends Expression_1.Expression {
     constructor(left, right, op, line, column) {
         super(line, column);
@@ -14,7 +16,7 @@ class Relational extends Expression_1.Expression {
         const leftResult = this.left.interpreter(environment);
         const rightResult = this.right.interpreter(environment);
         if (leftResult.type == Result_1.dataType.NULL || rightResult.type == Result_1.dataType.NULL) {
-            throw Error("Error: type null");
+            throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Valor null no es valido en operacion relacional`, this.line, this.column));
         }
         if (((leftResult.type == Result_1.dataType.NUMBER || leftResult.type == Result_1.dataType.DOUBLE || leftResult.type == Result_1.dataType.CHAR) &&
             (rightResult.type == Result_1.dataType.NUMBER || rightResult.type == Result_1.dataType.DOUBLE || rightResult.type == Result_1.dataType.CHAR))

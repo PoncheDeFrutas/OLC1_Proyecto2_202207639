@@ -1,5 +1,8 @@
 /*-----------------------------------------------IMPORTS AND JS CODE--------------------------------------------------*/
 %{
+
+    const { Error_ } = require('../js/Error');
+    const { tError } = require('../js/tConsole');
     const { Arithmetic } = require('../js/Expression/Arithmetic');
     const { Relational } = require('../js/Expression/Relational');
     const { Logical } = require('../js/Expression/Logical');
@@ -162,7 +165,7 @@
 <<EOF>> return 'EOF'
 
 /*Error*/
-. {console.error("Error: Caracter inesperado: " + yytext + " Linea: " + yylloc.first_line + " Columna: " + yylloc.first_column);}
+. {tError.push(new Error_(tError.length, "Lexico", `Caracter no valido: ${yytext}`, yylineno, yytext.length));}
 
 /lex
 

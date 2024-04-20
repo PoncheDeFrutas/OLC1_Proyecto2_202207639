@@ -2,6 +2,8 @@ import {Instruction} from "../Abstract/Instruction";
 import {Environment} from "../Symbol/Environment";
 import {dataType, Result} from "../Abstract/Result";
 import {FunctionValue} from "./FunctionValue";
+import {tError} from "../tConsole";
+import {Error_} from "../Error";
 
 export class execute extends Instruction {
 
@@ -14,7 +16,9 @@ export class execute extends Instruction {
 
     public interpreter(environment: Environment): Result {
         if (environment.getFunction(this.Function.id) == null){
-            throw new Error("Error: Function does not exist");
+            throw tError.push(new Error_(tError.length, "Semantico",
+                `La función ${this.Function.id} no existe D:`, this.line, this.column ))
+
         } else{
             const result = this.Function.interpreter(environment);
             if (result != null){

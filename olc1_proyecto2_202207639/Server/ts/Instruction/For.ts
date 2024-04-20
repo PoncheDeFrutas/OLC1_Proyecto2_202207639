@@ -2,6 +2,8 @@ import { Expression } from "../Abstract/Expression";
 import { Instruction } from "../Abstract/Instruction";
 import { Environment } from "../Symbol/Environment";
 import {Block} from "./Block";
+import {tError} from "../tConsole";
+import {Error_} from "../Error";
 
 export class For extends Instruction{
     variable: Instruction
@@ -29,7 +31,9 @@ export class For extends Instruction{
                 } else if (element.typeValue == 'return') {
                     return element;
                 } else{
-                    throw Error(`Error: Type [${element.type}] is not valid for [For] code`);
+                    throw tError.push(new Error_(tError.length, "Semantico",
+                        `Tipo ${condition.type} no es valido para retorno [For]`, this.line, this.column ))
+
                 }
             }
             this.increment.interpreter(newEnv)

@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Typeof = void 0;
 const Expression_1 = require("../Abstract/Expression");
 const Result_1 = require("../Abstract/Result");
+const tConsole_1 = require("../tConsole");
+const Error_1 = require("../Error");
 class Typeof extends Expression_1.Expression {
     constructor(exp, line, column) {
         super(line, column);
@@ -30,7 +32,7 @@ class Typeof extends Expression_1.Expression {
             case Result_1.dataType.STRING:
                 return { value: "string", type: temporalType };
             default:
-                throw Error("Error: Type not valid");
+                throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${temporalType} no valido para operación typeof`, this.line, this.column));
         }
     }
 }

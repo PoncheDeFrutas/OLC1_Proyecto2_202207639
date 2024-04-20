@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Arithmetic = void 0;
 const Expression_1 = require("../Abstract/Expression");
 const Result_1 = require("../Abstract/Result");
+const tConsole_1 = require("../tConsole");
+const Error_1 = require("../Error");
 class Arithmetic extends Expression_1.Expression {
     constructor(left, right, op, line, column) {
         super(line, column);
@@ -23,7 +25,7 @@ class Arithmetic extends Expression_1.Expression {
                     case Result_1.dataType.DOUBLE:
                         return { value: -leftResult.value, type: dominantType };
                     default:
-                        throw Error("Error: Type mismatch");
+                        throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${dominantType} Invalido en Operación Unimus`, this.line, this.column));
                 }
             case Result_1.ArithmeticOp.SUM:
                 dominantType = SUM[leftResult.type][rightResult.type];
@@ -39,7 +41,7 @@ class Arithmetic extends Expression_1.Expression {
                     case Result_1.dataType.STRING:
                         return { value: leftResult.value.toString() + rightResult.value.toString(), type: dominantType };
                     default:
-                        throw Error("Error: Type mismatch");
+                        throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${dominantType} Invalido en Operación SUM`, this.line, this.column));
                 }
             case Result_1.ArithmeticOp.RES:
                 dominantType = RES[leftResult.type][rightResult.type];
@@ -53,7 +55,7 @@ class Arithmetic extends Expression_1.Expression {
                         convertType(rightResult);
                         return { value: leftResult.value - rightResult.value, type: dominantType };
                     default:
-                        throw Error("Error: Type mismatch");
+                        throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${dominantType} Invalido en Operación RES`, this.line, this.column));
                 }
             case Result_1.ArithmeticOp.MUL:
                 dominantType = MUL[leftResult.type][rightResult.type];
@@ -67,7 +69,7 @@ class Arithmetic extends Expression_1.Expression {
                         convertType(rightResult);
                         return { value: leftResult.value * rightResult.value, type: dominantType };
                     default:
-                        throw Error("Error: Type mismatch");
+                        throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${dominantType} Invalido en Operación MUL`, this.line, this.column));
                 }
             case Result_1.ArithmeticOp.DIV:
                 dominantType = DIV[leftResult.type][rightResult.type];
@@ -79,7 +81,7 @@ class Arithmetic extends Expression_1.Expression {
                             throw Error("Error: Division by zero");
                         return { value: leftResult.value / rightResult.value, type: dominantType };
                     default:
-                        throw Error("Error: Type mismatch");
+                        throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${dominantType} Invalido en Operación DIV`, this.line, this.column));
                 }
             case Result_1.ArithmeticOp.MOD:
                 dominantType = MOD[leftResult.type][rightResult.type];
@@ -91,7 +93,7 @@ class Arithmetic extends Expression_1.Expression {
                             throw Error("Error: Division by zero");
                         return { value: leftResult.value % rightResult.value, type: dominantType };
                     default:
-                        throw Error("Error: Type mismatch");
+                        throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${dominantType} Invalido en Operación MOD`, this.line, this.column));
                 }
             case Result_1.ArithmeticOp.POW:
                 dominantType = POW[leftResult.type][rightResult.type];
@@ -105,7 +107,7 @@ class Arithmetic extends Expression_1.Expression {
                         convertType(rightResult);
                         return { value: Math.pow(leftResult.value, rightResult.value), type: dominantType };
                     default:
-                        throw Error("Error: Type mismatch");
+                        throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${dominantType} Invalido en Operación POW`, this.line, this.column));
                 }
             default:
                 return { value: null, type: Result_1.dataType.NULL };

@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = void 0;
 const Instruction_1 = require("../Abstract/Instruction");
 const Result_1 = require("../Abstract/Result");
+const tConsole_1 = require("../tConsole");
+const Error_1 = require("../Error");
 class execute extends Instruction_1.Instruction {
     constructor(Function, line, column) {
         super(line, column);
@@ -10,7 +12,7 @@ class execute extends Instruction_1.Instruction {
     }
     interpreter(environment) {
         if (environment.getFunction(this.Function.id) == null) {
-            throw new Error("Error: Function does not exist");
+            throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `La función ${this.Function.id} no existe D:`, this.line, this.column));
         }
         else {
             const result = this.Function.interpreter(environment);

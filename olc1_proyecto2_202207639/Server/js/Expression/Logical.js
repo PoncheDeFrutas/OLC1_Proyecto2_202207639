@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Logical = void 0;
 const Expression_1 = require("../Abstract/Expression");
 const Result_1 = require("../Abstract/Result");
+const tConsole_1 = require("../tConsole");
+const Error_1 = require("../Error");
 class Logical extends Expression_1.Expression {
     constructor(left, right, op, line, column) {
         super(line, column);
@@ -30,7 +32,7 @@ class Logical extends Expression_1.Expression {
                 }
                 break;
             default:
-                throw Error("Error: Type mismatch");
+                throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Operador logico no valido ${this.op}`, this.line, this.column));
         }
         return { value: null, type: Result_1.dataType.NULL };
     }

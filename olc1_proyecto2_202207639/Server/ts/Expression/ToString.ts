@@ -1,6 +1,8 @@
 import {Environment} from "../Symbol/Environment";
 import {Expression} from "../Abstract/Expression";
 import {dataType, Result} from "../Abstract/Result";
+import {tError} from "../tConsole";
+import {Error_} from "../Error";
 
 export class ToString extends Expression{
     private text: Expression;
@@ -13,9 +15,9 @@ export class ToString extends Expression{
     public interpreter(environment: Environment): Result {
         const result = this.text.interpreter(environment)
         if (result.type != dataType.NUMBER && result.type != dataType.DOUBLE && dataType.BOOL){
-            throw Error("Error: Type mismatch")
+            throw tError.push(new Error_(tError.length, "Semantico",
+                `Tipo ${result.type} no valido para operación ToString`, this.line, this.column ))
         }
-
         return {value: result.value.toString(), type: dataType.STRING}
     }
 }

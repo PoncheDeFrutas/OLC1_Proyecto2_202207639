@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeclarationVector = void 0;
 const Instruction_1 = require("../Abstract/Instruction");
 const Result_1 = require("../Abstract/Result");
+const tConsole_1 = require("../tConsole");
+const Error_1 = require("../Error");
 class DeclarationVector extends Instruction_1.Instruction {
     constructor(type, id, confirmType, row, columns, simple, line, column) {
         super(line, column);
@@ -16,7 +18,7 @@ class DeclarationVector extends Instruction_1.Instruction {
     interpreter(environment) {
         var _a;
         if (this.confirmType != this.type) {
-            throw new Error(`Type Error: ${this.confirmType} is not assignable to ${this.type}`);
+            throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${this.confirmType} no coincide con ${this.type}`, this.line, this.column));
         }
         let dominantType;
         let defaultVal;
@@ -42,19 +44,19 @@ class DeclarationVector extends Instruction_1.Instruction {
                 defaultVal = "";
                 break;
             default:
-                throw Error("Error: Type not valid");
+                throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${this.type}, no permitivo para la declaración de vectores`, this.line, this.column));
         }
         const valRows = this.row.interpreter(environment);
         if (this.columns != null) {
             const valColumns = this.columns.interpreter(environment);
             if (Result_1.dataType.NUMBER != valRows.type || Result_1.dataType.NUMBER != valColumns.type) {
-                throw new Error(`Type Error: ${valRows.type} is not assignable to ${Result_1.dataType.NUMBER}`);
+                throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `El tipo de una dimensional no es compatible con los vectores`, this.line, this.column));
             }
             environment.saveVectors(this.id, dominantType, valRows.value, valColumns.value, this.line, this.column);
         }
         else {
             if (Result_1.dataType.NUMBER != valRows.type) {
-                throw new Error(`Type Error: ${valRows.type} is not assignable to ${Result_1.dataType.NUMBER}`);
+                throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `El tipo de una dimensional no es compatible con los vectores`, this.line, this.column));
             }
             environment.saveVectors(this.id, dominantType, valRows.value, 1, this.line, this.column);
         }

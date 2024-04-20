@@ -2,6 +2,8 @@ import { Instruction } from "../Abstract/Instruction";
 import { Environment } from "../Symbol/Environment";
 import { Expression } from "../Abstract/Expression";
 import { dataType } from "../Abstract/Result";
+import {tError} from "../tConsole";
+import {Error_} from "../Error";
 
 export class DeclarationVector2 extends Instruction{
 
@@ -44,7 +46,8 @@ export class DeclarationVector2 extends Instruction{
                 defaultVal = "";
                 break;
             default:
-                throw Error("Error: Type not valid")
+                throw tError.push(new Error_(tError.length, "Semantico",
+                    `Tipo ${this.type}, no permitivo para la declaración de vectores`, this.line, this.column ))
         }
         if (this.simple && !(this.values instanceof Expression)){
             if(!(this.values[0] instanceof Array)){
@@ -58,11 +61,13 @@ export class DeclarationVector2 extends Instruction{
                     if (value.type == dominantType){
                         environment.getVectors(this.id)?.setValue(i, 0, "VectorV", dominantType, value.value, this.line, this.column);
                     } else{
-                        throw Error("Error: Value type not valid")
+                        throw tError.push(new Error_(tError.length, "Semantico",
+                            `Tipo ${value.type} de la expresion no coincide con el del vector`, this.line, this.column ))
                     }
                 }
             } else{
-                throw Error("Error: Type not valid")
+                throw tError.push(new Error_(tError.length, "Semantico",
+                    `El vector que se intena asignar no es valido`, this.line, this.column ))
             }
         } else if(!(this.values instanceof Expression)){
             if (this.values[0] instanceof Array){
@@ -78,7 +83,8 @@ export class DeclarationVector2 extends Instruction{
                         if (value.type == dominantType){
                             environment.getVectors(this.id)?.setValue(i, j, "VectorV", dominantType, value.value, this.line, this.column);
                         } else{
-                            throw Error("Error: Value type not valid")
+                            throw tError.push(new Error_(tError.length, "Semantico",
+                                `Tipo ${value.type} de la expresion no coincide con el del vector`, this.line, this.column ))
                         }
                     }
                 }
@@ -92,7 +98,8 @@ export class DeclarationVector2 extends Instruction{
                 if (value.type == dominantType){
                     environment.getVectors(this.id)?.setValue(i, 0, "VectorV", dominantType, value.value, this.line, this.column);
                 } else{
-                    throw Error("Error: Value type not valid")
+                    throw tError.push(new Error_(tError.length, "Semantico",
+                        `Tipo ${value.type} de la expresion no coincide con el del vector`, this.line, this.column ))
                 }
             }
         }

@@ -64,19 +64,15 @@ export class Environment{
 
     public saveFunction(id: string, func: Function){
         let env: Environment | null = this;
-        while(env != null){
-            if(env.functions.has(id)){
-                throw Error("Function already exist")
-            } else if (env.variables.has(id)){
-                throw Error("This ID is a Variable")
-            } else if (env.vectors.has(id)){
-                throw Error("This ID is a Vector")
-            }
-            env = env.previous;
+        if(env.functions.has(id)){
+            throw Error("Function already exist")
+        } else if (env.variables.has(id)){
+            throw Error("This ID is a Variable")
+        } else if (env.vectors.has(id)){
+            throw Error("This ID is a Vector")
         }
         this.functions.set(id, func);
     }
-
 
 
     public getVariable(id: string): Symbol | null | undefined {

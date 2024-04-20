@@ -2,6 +2,8 @@ import { env } from "process";
 import { Environment } from "../Symbol/Environment";
 import { Expression } from "../Abstract/Expression";
 import { LogicalOp, dataType, Result } from "../Abstract/Result";
+import {tError} from "../tConsole";
+import {Error_} from "../Error";
 
 export class Logical extends Expression{
     public left: Expression;
@@ -36,7 +38,8 @@ export class Logical extends Expression{
                 }
                 break;
             default:
-                throw Error("Error: Type mismatch");
+                throw tError.push(new Error_(tError.length, "Semantico",
+                    `Operador logico no valido ${this.op}`, this.line, this.column ))
         }
         return {value: null, type: dataType.NULL}
     }

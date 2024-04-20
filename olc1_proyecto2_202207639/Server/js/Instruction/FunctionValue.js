@@ -4,6 +4,8 @@ exports.FunctionValue = void 0;
 const Result_1 = require("../Abstract/Result");
 const Environment_1 = require("../Symbol/Environment");
 const Instruction_1 = require("../Abstract/Instruction");
+const tConsole_1 = require("../tConsole");
+const Error_1 = require("../Error");
 class FunctionValue extends Instruction_1.Instruction {
     constructor(id, parameters, enable, line, column) {
         super(line, column);
@@ -17,7 +19,7 @@ class FunctionValue extends Instruction_1.Instruction {
         if (func != null) {
             const newEnv = new Environment_1.Environment(environment.getGlobal());
             if (func.parameters.length != this.parameters.length) {
-                throw new Error("Error: Number of parameters is not correct");
+                throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Numero de parametros incorrectos para la función ${func.id}`, this.line, this.column));
             }
             for (let i = 0; i < this.parameters.length; i++) {
                 const parameter = func.parameters[i];
@@ -40,14 +42,14 @@ class FunctionValue extends Instruction_1.Instruction {
                         dominantType = Result_1.dataType.STRING;
                         break;
                     default:
-                        throw Error("Error: Type not valid");
+                        throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${parameter.type}, no permitivo para la declaración de Funciones`, this.line, this.column));
                 }
                 if (parameter.vector) {
                     if (values.type == Result_1.dataType.ID) {
                         const vector = newEnv.getVectors(values.value);
                         if (vector != null) {
                             if (vector.type != dominantType) {
-                                throw new Error("Error: Type of parameter is not correct");
+                                throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${vector.type} de parametro no corresponde al que se asigna`, this.line, this.column));
                             }
                             else {
                                 if (parameter.simple && vector.values[0].length == 1) {
@@ -59,21 +61,21 @@ class FunctionValue extends Instruction_1.Instruction {
                                     (_b = newEnv.getVectors(parameter.id)) === null || _b === void 0 ? void 0 : _b.setVector(vector.values);
                                 }
                                 else {
-                                    throw new Error("Error: Type of parameter is not correct");
+                                    throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${vector.type} de parametro no corresponde al que se asigna`, this.line, this.column));
                                 }
                             }
                         }
                         else {
-                            throw new Error("Error: Vector not found");
+                            throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Vector ${values.value} no ha sido encontrado`, this.line, this.column));
                         }
                     }
                     else {
-                        throw new Error("Error: Type of parameter is not correct");
+                        throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo de parametro no valido `, this.line, this.column));
                     }
                 }
                 else {
                     if (dominantType != values.type) {
-                        throw new Error("Error: Type of parameter is not correct");
+                        throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo de parametro no valido `, this.line, this.column));
                     }
                     else {
                         newEnv.save(parameter.id, values.value, values.type, this.line, this.column);
@@ -96,7 +98,7 @@ class FunctionValue extends Instruction_1.Instruction {
                     return { value: null, type: Result_1.dataType.NULL };
                 }
                 else {
-                    throw Error(`Error: Type [${element.type}] is not valid for [Function] code`);
+                    throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo de retorno ${element.type} no es valido para la función definida `, this.line, this.column));
                 }
             }
             else {
@@ -104,12 +106,12 @@ class FunctionValue extends Instruction_1.Instruction {
                     return null;
                 }
                 else {
-                    throw Error(`Error: Type [${element.type}] is not valid for [Function] code`);
+                    throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo de retorno ${element.type} no es valido para la función definida `, this.line, this.column));
                 }
             }
         }
         else {
-            throw new Error(`Error: Function does not exist ${this.id}`);
+            throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `La función ${this.id} no existe`, this.line, this.column));
         }
     }
 }

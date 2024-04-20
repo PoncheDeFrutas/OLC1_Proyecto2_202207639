@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.For = void 0;
 const Instruction_1 = require("../Abstract/Instruction");
 const Environment_1 = require("../Symbol/Environment");
+const tConsole_1 = require("../tConsole");
+const Error_1 = require("../Error");
 class For extends Instruction_1.Instruction {
     constructor(variable, condition, increment, block, line, column) {
         super(line, column);
@@ -25,7 +27,7 @@ class For extends Instruction_1.Instruction {
                     return element;
                 }
                 else {
-                    throw Error(`Error: Type [${element.type}] is not valid for [For] code`);
+                    throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${condition.type} no es valido para retorno [For]`, this.line, this.column));
                 }
             }
             this.increment.interpreter(newEnv);

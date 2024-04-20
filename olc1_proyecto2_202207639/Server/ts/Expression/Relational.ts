@@ -2,6 +2,8 @@ import { env } from "process";
 import { Environment } from "../Symbol/Environment";
 import {Expression} from "../Abstract/Expression";
 import {dataType, RelationalOp, Result} from "../Abstract/Result";
+import {tError} from "../tConsole";
+import {Error_} from "../Error";
 
 export class Relational extends Expression {
     public left: Expression;
@@ -20,7 +22,8 @@ export class Relational extends Expression {
         const rightResult = this.right.interpreter(environment);
 
         if (leftResult.type == dataType.NULL || rightResult.type == dataType.NULL){
-            throw Error ("Error: type null");
+            throw tError.push(new Error_(tError.length, "Semantico",
+                `Valor null no es valido en operacion relacional`, this.line, this.column ))
         }
 
         if (((leftResult.type == dataType.NUMBER || leftResult.type == dataType.DOUBLE || leftResult.type == dataType.CHAR) &&

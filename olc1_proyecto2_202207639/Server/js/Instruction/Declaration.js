@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Declaration = void 0;
 const Instruction_1 = require("../Abstract/Instruction");
 const Result_1 = require("../Abstract/Result");
+const tConsole_1 = require("../tConsole");
+const Error_1 = require("../Error");
 class Declaration extends Instruction_1.Instruction {
     constructor(type, id, value, line, column) {
         super(line, column);
@@ -35,12 +37,12 @@ class Declaration extends Instruction_1.Instruction {
                 defaultVal = "";
                 break;
             default:
-                throw Error("Error: Type not valid");
+                throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${this.type}, no permitivo para la declaración de variables`, this.line, this.column));
         }
         if (this.value != null) {
             const val = this.value.interpreter(environment);
             if (dominantType != val.type) {
-                throw new Error(`Type Error: ${val.type} is not assignable to ${dominantType}`);
+                throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${val.type} no asignable a ${dominantType}`, this.line, this.column));
             }
             this.id.forEach(id => {
                 environment.save(id, val.value, val.type, this.line, this.column);

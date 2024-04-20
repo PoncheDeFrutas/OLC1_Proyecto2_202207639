@@ -2,6 +2,8 @@ import { Instruction } from "../Abstract/Instruction";
 import { Environment } from "../Symbol/Environment";
 import { Expression } from "../Abstract/Expression";
 import { dataType } from "../Abstract/Result";
+import {tError} from "../tConsole";
+import {Error_} from "../Error";
 
 export class DeclarationVector extends Instruction{
 
@@ -25,7 +27,8 @@ export class DeclarationVector extends Instruction{
     public interpreter(environment: Environment): any {
 
         if (this.confirmType != this.type){
-            throw new Error(`Type Error: ${this.confirmType} is not assignable to ${this.type}`)
+            throw tError.push(new Error_(tError.length, "Semantico",
+                `Tipo ${this.confirmType} no coincide con ${this.type}`, this.line, this.column ))
         }
 
         let dominantType: dataType;
@@ -53,7 +56,8 @@ export class DeclarationVector extends Instruction{
                 defaultVal = "";
                 break;
             default:
-                throw Error("Error: Type not valid")
+                throw tError.push(new Error_(tError.length, "Semantico",
+                    `Tipo ${this.type}, no permitivo para la declaración de vectores`, this.line, this.column ))
         }
 
         const valRows = this.row.interpreter(environment);
@@ -61,12 +65,14 @@ export class DeclarationVector extends Instruction{
         if (this.columns != null){
             const valColumns = this.columns.interpreter(environment);
             if (dataType.NUMBER != valRows.type || dataType.NUMBER != valColumns.type) {
-                throw new Error(`Type Error: ${valRows.type} is not assignable to ${dataType.NUMBER}`)
+                throw tError.push(new Error_(tError.length, "Semantico",
+                    `El tipo de una dimensional no es compatible con los vectores`, this.line, this.column ))
             }
             environment.saveVectors(this.id, dominantType, valRows.value, valColumns.value, this.line, this.column);
         } else{
             if (dataType.NUMBER != valRows.type) {
-                throw new Error(`Type Error: ${valRows.type} is not assignable to ${dataType.NUMBER}`)
+                throw tError.push(new Error_(tError.length, "Semantico",
+                    `El tipo de una dimensional no es compatible con los vectores`, this.line, this.column ))
             }
             environment.saveVectors(this.id, dominantType, valRows.value, 1, this.line, this.column);
         }

@@ -1,6 +1,8 @@
 import { Environment } from "../Symbol/Environment";
 import { Expression } from "../Abstract/Expression";
 import {dataType, Result} from "../Abstract/Result";
+import {tError} from "../tConsole";
+import {Error_} from "../Error";
 
 export class VectorValue extends Expression{
 
@@ -19,7 +21,8 @@ export class VectorValue extends Expression{
         const vector = environment.getVectors(this.id);
         const x = this.x.interpreter(environment);
         if (x.type != dataType.NUMBER){
-            throw new Error(`Type Error: ${x.type} is not assignable to NUMBER`)
+            throw tError.push(new Error_(tError.length, "Semantico",
+                `Tipo ${x.type} no valido para obtener valor de vector`, this.line, this.column ))
         }
         let y;
         if (this.y != null){
@@ -28,7 +31,8 @@ export class VectorValue extends Expression{
             y = 0;
         }
         if (vector == null) {
-            throw new Error(`Vector ${this.id} doesn't exist`);
+            throw tError.push(new Error_(tError.length, "Semantico",
+                `Vector ${this.id} no existe`, this.line, this.column ))
         }
         return {value: vector.getValue(x.value,y).value, type: vector.type};
     }

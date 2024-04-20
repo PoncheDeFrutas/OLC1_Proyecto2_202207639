@@ -1,6 +1,8 @@
 import {Environment} from "../Symbol/Environment";
 import {Expression} from "../Abstract/Expression";
 import {dataType, Result} from "../Abstract/Result";
+import {tError} from "../tConsole";
+import {Error_} from "../Error";
 
 export class Length extends Expression{
 
@@ -19,7 +21,8 @@ export class Length extends Expression{
         } else if(result.type == dataType.STRING){
             return {value: result.value.length, type:dataType.NUMBER }
         } else{
-            throw Error("Error: Type mismatch")
+            throw tError.push(new Error_(tError.length, "Semantico",
+                `Expresión no valida para comando length`, this.line, this.column ))
         }
     }
 }

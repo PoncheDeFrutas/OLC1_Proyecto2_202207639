@@ -1,6 +1,8 @@
 import {Environment} from "../Symbol/Environment";
 import {Expression} from "../Abstract/Expression";
 import {dataType, Result} from "../Abstract/Result";
+import {tError} from "../tConsole";
+import {Error_} from "../Error";
 
 export class Typeof extends Expression{
 
@@ -32,7 +34,8 @@ export class Typeof extends Expression{
             case dataType.STRING:
                 return {value: "string", type:temporalType}
             default:
-                throw Error("Error: Type not valid")
+                throw tError.push(new Error_(tError.length, "Semantico",
+                    `Tipo ${temporalType} no valido para operación typeof`, this.line, this.column ))
         }
     }
 }

@@ -8,12 +8,18 @@ dependencies:
   '@types/express':
     specifier: ^4.17.21
     version: 4.17.21
+  '@types/graphviz':
+    specifier: ^0.0.39
+    version: 0.0.39
   cors:
     specifier: ^2.8.5
     version: 2.8.5
   express:
     specifier: ^4.19.2
     version: 4.19.2
+  graphviz:
+    specifier: ^0.0.9
+    version: 0.0.9
   jison:
     specifier: 0.4.18
     version: 0.4.18
@@ -60,6 +66,12 @@ packages:
       '@types/express-serve-static-core': 4.19.0
       '@types/qs': 6.9.14
       '@types/serve-static': 1.15.7
+    dev: false
+
+  /@types/graphviz@0.0.39:
+    resolution: {integrity: sha512-3sBvki6GxLB4yvxArDQ0jjfuMKWEGVLUttNo3KULoidIstLIaCa2gG8+YkPQdoSUO74Y/ww3cZ7oAnw61dYIbw==}
+    dependencies:
+      '@types/node': 20.12.5
     dev: false
 
   /@types/http-errors@2.0.4:
@@ -409,6 +421,13 @@ packages:
       get-intrinsic: 1.2.4
     dev: false
 
+  /graphviz@0.0.9:
+    resolution: {integrity: sha512-SmoY2pOtcikmMCqCSy2NO1YsRfu9OO0wpTlOYW++giGjfX1a6gax/m1Fo8IdUd0/3H15cTOfR1SMKwohj4LKsg==}
+    engines: {node: '>=0.6.8'}
+    dependencies:
+      temp: 0.4.0
+    dev: false
+
   /has-property-descriptors@1.0.2:
     resolution: {integrity: sha512-55JNKuIW+vq4Ke1BjOTjM2YctQIvCT7GFzHwmfZPGo5wnrgkid0YQtnAleFSqumZm4az3n2BS+erby5ipJdgrg==}
     dependencies:
@@ -744,6 +763,11 @@ packages:
     resolution: {integrity: sha512-aqD2Q0144Z+/RqG52NeHEkZauTAUWJO8c6yTftGJKO3Tja5tUgIfmIl6kExvhtxSDP7fXB6DvzkfMpCd/F3G+Q==}
     engines: {node: '>=0.6.19'}
     dev: true
+
+  /temp@0.4.0:
+    resolution: {integrity: sha512-IsFisGgDKk7qzK9erMIkQe/XwiSUdac7z3wYOsjcLkhPBy3k1SlvLoIh2dAHIlEpgA971CgguMrx9z8fFg7tSA==}
+    engines: {'0': node >=0.4.0}
+    dev: false
 
   /through@2.3.8:
     resolution: {integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==}

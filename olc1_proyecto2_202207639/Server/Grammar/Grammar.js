@@ -480,6 +480,9 @@ parse: function parse(input) {
     return true;
 }};
 
+
+    const { Error_ } = require('../js/Error');
+    const { tError } = require('../js/tConsole');
     const { Arithmetic } = require('../js/Expression/Arithmetic');
     const { Relational } = require('../js/Expression/Relational');
     const { Logical } = require('../js/Expression/Logical');
@@ -973,7 +976,7 @@ case 62:return 35;
 break;
 case 63:return 5
 break;
-case 64:console.error("Error: Caracter inesperado: " + yy_.yytext + " Linea: " + yy_.yylloc.first_line + " Columna: " + yy_.yylloc.first_column);
+case 64:tError.push(new Error_(tError.length, "Lexico", `Caracter no valido: ${yy_.yytext}`, yy_.yylineno, yy_.yytext.length));
 break;
 case 65:console.log(yy_.yytext);
 break;

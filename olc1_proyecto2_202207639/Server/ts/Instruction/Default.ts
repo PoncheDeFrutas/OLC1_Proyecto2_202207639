@@ -1,5 +1,7 @@
 import { Instruction } from "../Abstract/Instruction";
 import { Environment } from "../Symbol/Environment";
+import {tError} from "../tConsole";
+import {Error_} from "../Error";
 
 export class Default extends Instruction{
     instructions: Instruction[]
@@ -20,7 +22,9 @@ export class Default extends Instruction{
                         } else if (element.typeValue == 'return') {
                             return element
                         } else{
-                            throw Error(`Error: Type [${element.type}] is not valid for [Default] code`);
+                            throw tError.push(new Error_(tError.length, "Semantico",
+                                `Tipo ${element.type} no es valido en [Default] code`, this.line, this.column ))
+
                         }
                     }
                 }

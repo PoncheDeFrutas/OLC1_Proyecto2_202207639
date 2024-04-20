@@ -3,6 +3,8 @@ import { Instruction } from "../Abstract/Instruction";
 import { Environment } from "../Symbol/Environment";
 import { Case } from "./Case";
 import { Default } from "./Default";
+import {tError} from "../tConsole";
+import {Error_} from "../Error";
 
 export class Switch extends Instruction{
     condition: Expression
@@ -18,7 +20,8 @@ export class Switch extends Instruction{
 
     public interpreter(environment: Environment): any {
         if (this.Cases == null && this.Default == null){
-            throw Error("Error: No [Cases] or [Default] code")
+            throw tError.push(new Error_(tError.length, "Semantico",
+                `No hay Cases o Default en [Switch]`, this.line, this.column))
         }
 
         let value = false;
@@ -35,7 +38,8 @@ export class Switch extends Instruction{
                         } else if (result.typeValue == 'return') {
                             return result
                         } else{
-                            throw Error(`Error: Type [${result.type}] is not valid for [Case] code`);
+                            throw tError.push(new Error_(tError.length, "Semantico",
+                                `Tipo ${condition.type} no es valido para retorno [Case]`, this.line, this.column ))
                         }
                     }
                     value = true;
@@ -48,7 +52,8 @@ export class Switch extends Instruction{
                         } else if (result.typeValue == 'return') {
                             return result
                         } else{
-                            throw Error(`Error: Type [${result.type}] is not valid for [Case] code`);
+                            throw tError.push(new Error_(tError.length, "Semantico",
+                                `Tipo ${condition.type} no es valido para retorno [Case]`, this.line, this.column ))
                         }
                     }
                 }
@@ -61,7 +66,8 @@ export class Switch extends Instruction{
                     } else if (result.typeValue == 'return') {
                         return result
                     } else{
-                        throw Error(`Error: Type [${result.type}] is not valid for [Case] code`);
+                        throw tError.push(new Error_(tError.length, "Semantico",
+                            `Tipo ${condition.type} no es valido para retorno [Default]`, this.line, this.column ))
                     }
                 }
             }
@@ -74,7 +80,8 @@ export class Switch extends Instruction{
                 } else if (result.typeValue == 'return') {
                     return result
                 } else{
-                    throw Error(`Error: Type [${result.type}] is not valid for [Case] code`);
+                    throw tError.push(new Error_(tError.length, "Semantico",
+                        `Tipo ${condition.type} no es valido para retorno [Default]`, this.line, this.column ))
                 }
             }
         }

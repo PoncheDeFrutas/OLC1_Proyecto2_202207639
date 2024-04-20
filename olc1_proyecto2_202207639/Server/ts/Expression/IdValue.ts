@@ -1,6 +1,8 @@
 import {Expression} from "../Abstract/Expression";
 import {Environment} from "../Symbol/Environment";
 import {dataType, Result} from "../Abstract/Result";
+import {tError} from "../tConsole";
+import {Error_} from "../Error";
 
 export class IdValue extends Expression{
 
@@ -17,6 +19,7 @@ export class IdValue extends Expression{
         if (vector != null) {
             return {value: vector.id, type: dataType.ID};
         }
-        throw new Error("Variable " + this.id + " does not exist (Id Value)");
+        throw tError.push(new Error_(tError.length, "Semantico",
+            `(variable/vector) no encontrado: ${this.id}`, this.line, this.column ))
     }
 }

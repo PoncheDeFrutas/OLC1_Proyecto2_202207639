@@ -2,6 +2,8 @@ import {Instruction} from "../Abstract/Instruction";
 import {Environment} from "../Symbol/Environment";
 import {dataType} from "../Abstract/Result";
 import {Block} from "./Block";
+import {tError} from "../tConsole";
+import {Error_} from "../Error";
 
 export class Function extends Instruction{
 
@@ -42,7 +44,8 @@ export class Function extends Instruction{
                 dominantType = dataType.NULL
                 break;
             default:
-                throw Error("Error: Type not valid")
+                throw tError.push(new Error_(tError.length, "Semantico",
+                    `Tipo ${this.type}, no permitivo para la declaración de funciones`, this.line, this.column ))
         }
         this.type = dominantType;
         environment.saveFunction(this.id, this);

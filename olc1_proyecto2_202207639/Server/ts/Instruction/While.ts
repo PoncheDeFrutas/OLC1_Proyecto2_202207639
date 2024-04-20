@@ -2,6 +2,8 @@ import { Instruction } from "../Abstract/Instruction";
 import { Environment } from "../Symbol/Environment";
 import { Expression } from "../Abstract/Expression";
 import { dataType } from "../Abstract/Result";
+import {tError} from "../tConsole";
+import {Error_} from "../Error";
 
 export class While extends Instruction {
 
@@ -13,13 +15,15 @@ export class While extends Instruction {
 
         let condition = this.condition.interpreter(env);
         if (condition.type != dataType.BOOL) {
-            throw Error(`Error: Type [${condition.type}] is not valid for [While] condition`);
+            throw tError.push(new Error_(tError.length, "Semantico",
+                `Tipo ${condition.type}  no es valido para la condición [While]`, this.line, this.column ))
         }
 
         while (condition.value) {
             condition = this.condition.interpreter(env);
             if (condition.type != dataType.BOOL) {
-                throw Error(`Error: Type [${condition.type}] is not valid for [While] condition`);
+                throw tError.push(new Error_(tError.length, "Semantico",
+                    `Tipo ${condition.type}  no es valido para la condición [While]`, this.line, this.column ))
             }
             const element = this.code.interpreter(env);
             if (element != null || element != undefined) {
@@ -30,7 +34,8 @@ export class While extends Instruction {
                 } else if (element.typeValue == 'return') {
                     return element;
                 } else{
-                    throw Error(`Error: Type [${element.type}] is not valid for [While] code`);
+                    throw tError.push(new Error_(tError.length, "Semantico",
+                        `Tipo ${condition.type} no es valido para retorno [While]`, this.line, this.column ))
                 }
             }
         }

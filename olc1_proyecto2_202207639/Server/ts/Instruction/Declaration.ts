@@ -2,6 +2,8 @@ import { Instruction } from "../Abstract/Instruction";
 import { Environment } from "../Symbol/Environment";
 import { Expression } from "../Abstract/Expression";
 import { dataType } from "../Abstract/Result";
+import {tError} from "../tConsole";
+import {Error_} from "../Error";
 
 export class Declaration extends Instruction {
 
@@ -42,13 +44,15 @@ export class Declaration extends Instruction {
                 defaultVal = "";
                 break;
             default:
-                throw Error("Error: Type not valid")
+                throw tError.push(new Error_(tError.length, "Semantico",
+                    `Tipo ${this.type}, no permitivo para la declaración de variables`, this.line, this.column ))
         }
 
         if (this.value != null){
             const val = this.value.interpreter(environment);
             if (dominantType != val.type) {
-                throw new Error(`Type Error: ${val.type} is not assignable to ${dominantType}`)
+                throw tError.push(new Error_(tError.length, "Semantico",
+                    `Tipo ${val.type} no asignable a ${dominantType}`, this.line, this.column ))
             }
             this.id.forEach(id => {
                 environment.save(id, val.value, val.type, this.line, this.column);

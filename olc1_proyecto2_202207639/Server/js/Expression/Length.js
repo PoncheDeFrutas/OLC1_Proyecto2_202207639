@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Length = void 0;
 const Expression_1 = require("../Abstract/Expression");
 const Result_1 = require("../Abstract/Result");
+const tConsole_1 = require("../tConsole");
+const Error_1 = require("../Error");
 class Length extends Expression_1.Expression {
     constructor(exp, line, column) {
         super(line, column);
@@ -18,7 +20,7 @@ class Length extends Expression_1.Expression {
             return { value: result.value.length, type: Result_1.dataType.NUMBER };
         }
         else {
-            throw Error("Error: Type mismatch");
+            throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Expresión no valida para comando length`, this.line, this.column));
         }
     }
 }

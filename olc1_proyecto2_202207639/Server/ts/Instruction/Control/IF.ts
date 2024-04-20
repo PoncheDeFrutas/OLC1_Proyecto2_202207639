@@ -3,6 +3,8 @@ import { dataType } from "../../Abstract/Result";
 import { Instruction } from "../../Abstract/Instruction";
 import { Block } from "../Block";
 import { Environment } from "../../Symbol/Environment";
+import {tError} from "../../tConsole";
+import {Error_} from "../../Error";
 
 export class FN_IF extends Instruction {
     condition: Expression
@@ -19,7 +21,8 @@ export class FN_IF extends Instruction {
     public interpreter(environment: Environment): any {
         const condition = this.condition.interpreter(environment)
         if (condition.type != dataType.BOOL) {
-            throw Error("Error: Type mismatch")
+            throw tError.push(new Error_(tError.length, "Semantico",
+                `Condición no booleana en sentencia if`, this.line, this.column ))
         }
         if (condition.value) {
             return this.blockIf.interpreter(environment)

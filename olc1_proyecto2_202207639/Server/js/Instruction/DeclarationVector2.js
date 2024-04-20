@@ -4,6 +4,8 @@ exports.DeclarationVector2 = void 0;
 const Instruction_1 = require("../Abstract/Instruction");
 const Expression_1 = require("../Abstract/Expression");
 const Result_1 = require("../Abstract/Result");
+const tConsole_1 = require("../tConsole");
+const Error_1 = require("../Error");
 class DeclarationVector2 extends Instruction_1.Instruction {
     constructor(type, id, values, simple, line, column) {
         super(line, column);
@@ -38,7 +40,7 @@ class DeclarationVector2 extends Instruction_1.Instruction {
                 defaultVal = "";
                 break;
             default:
-                throw Error("Error: Type not valid");
+                throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${this.type}, no permitivo para la declaración de vectores`, this.line, this.column));
         }
         if (this.simple && !(this.values instanceof Expression_1.Expression)) {
             if (!(this.values[0] instanceof Array)) {
@@ -53,12 +55,12 @@ class DeclarationVector2 extends Instruction_1.Instruction {
                         (_b = environment.getVectors(this.id)) === null || _b === void 0 ? void 0 : _b.setValue(i, 0, "VectorV", dominantType, value.value, this.line, this.column);
                     }
                     else {
-                        throw Error("Error: Value type not valid");
+                        throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${value.type} de la expresion no coincide con el del vector`, this.line, this.column));
                     }
                 }
             }
             else {
-                throw Error("Error: Type not valid");
+                throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `El vector que se intena asignar no es valido`, this.line, this.column));
             }
         }
         else if (!(this.values instanceof Expression_1.Expression)) {
@@ -76,7 +78,7 @@ class DeclarationVector2 extends Instruction_1.Instruction {
                             (_d = environment.getVectors(this.id)) === null || _d === void 0 ? void 0 : _d.setValue(i, j, "VectorV", dominantType, value.value, this.line, this.column);
                         }
                         else {
-                            throw Error("Error: Value type not valid");
+                            throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${value.type} de la expresion no coincide con el del vector`, this.line, this.column));
                         }
                     }
                 }
@@ -92,7 +94,7 @@ class DeclarationVector2 extends Instruction_1.Instruction {
                     (_e = environment.getVectors(this.id)) === null || _e === void 0 ? void 0 : _e.setValue(i, 0, "VectorV", dominantType, value.value, this.line, this.column);
                 }
                 else {
-                    throw Error("Error: Value type not valid");
+                    throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${value.type} de la expresion no coincide con el del vector`, this.line, this.column));
                 }
             }
         }

@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Default = void 0;
 const Instruction_1 = require("../Abstract/Instruction");
+const tConsole_1 = require("../tConsole");
+const Error_1 = require("../Error");
 class Default extends Instruction_1.Instruction {
     constructor(instructions, line, column) {
         super(line, column);
@@ -20,7 +22,7 @@ class Default extends Instruction_1.Instruction {
                             return element;
                         }
                         else {
-                            throw Error(`Error: Type [${element.type}] is not valid for [Default] code`);
+                            throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `Tipo ${element.type} no es valido en [Default] code`, this.line, this.column));
                         }
                     }
                 }
