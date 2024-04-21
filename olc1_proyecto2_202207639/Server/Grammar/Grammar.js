@@ -849,143 +849,145 @@ options: {"flex":true,"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:/*Ignore Comments*/
+case 0:/* Ignore single line comments */
 break;
 case 1:/*Ignore Comments*/
 break;
 case 2:/*Ignore Whitespaces*/
 break;
-case 3:return 95;
+case 3:/* Ignore tabs */
 break;
-case 4:return 94;
+case 4:return 95;
 break;
-case 5:return 44;
+case 5:return 94;
 break;
-case 6:return 45;
+case 6:return 44;
 break;
-case 7:return 47;
+case 7:return 45;
 break;
-case 8:return 101;
+case 8:return 47;
 break;
-case 9:return 103;
+case 9:return 101;
 break;
-case 10:return 90;
+case 10:return 103;
 break;
-case 11:return 91;
+case 11:return 90;
 break;
-case 12:return 92;
+case 12:return 91;
 break;
-case 13:return 40;
+case 13:return 92;
 break;
-case 14:return 39;
+case 14:return 40;
 break;
-case 15:return 41;
+case 15:return 39;
 break;
-case 16:return 42;
+case 16:return 41;
 break;
-case 17:return 43;
+case 17:return 42;
 break;
-case 18:return 93;
+case 18:return 43;
 break;
-case 19:return 48;
+case 19:return 93;
 break;
-case 20:return 55;
+case 20:return 48;
 break;
-case 21:return 57;
+case 21:return 55;
 break;
-case 22:return 25;
+case 22:return 57;
 break;
-case 23:return 106;
+case 23:return 25;
 break;
-case 24:return 114;
+case 24:return 106;
 break;
-case 25:return 73
+case 25:return 114;
 break;
-case 26:return 72
+case 26:return 73
 break;
-case 27:return 71
+case 27:return 72
 break;
-case 28:return 15
+case 28:return 71
 break;
-case 29:return 37;
+case 29:return 15
 break;
-case 30:return 38;
+case 30:return 37;
 break;
-case 31:return 75;
+case 31:return 38;
 break;
-case 32:return 74;
+case 32:return 75;
 break;
-case 33:return 76;
+case 33:return 74;
 break;
-case 34:return 77;
+case 34:return 76;
 break;
-case 35:return 79;
+case 35:return 77;
 break;
-case 36:return 78;
+case 36:return 79;
 break;
-case 37:return 80;
+case 37:return 78;
 break;
-case 38:return 81;
+case 38:return 80;
 break;
-case 39:return 83;
+case 39:return 81;
 break;
-case 40:return 85;
+case 40:return 83;
 break;
-case 41:return 82;
+case 41:return 85;
 break;
-case 42:return 84;
+case 42:return 82;
 break;
-case 43:return 87;
+case 43:return 84;
 break;
-case 44:return 86;
+case 44:return 87;
 break;
-case 45:return 88;
+case 45:return 86;
 break;
-case 46:return 70;
+case 46:return 88;
 break;
-case 47:return 34;
+case 47:return 70;
 break;
-case 48:return 26;
+case 48:return 34;
 break;
-case 49:return 29;
+case 49:return 26;
 break;
-case 50:return 49;
+case 50:return 29;
 break;
-case 51:return 52;
+case 51:return 49;
 break;
-case 52:return 99;
+case 52:return 52;
 break;
-case 53:return 100;
+case 53:return 99;
 break;
-case 54:return 36;
+case 54:return 100;
 break;
-case 55:return 11;
+case 55:return 36;
 break;
-case 56:return 89;
+case 56:return 11;
 break;
-case 57:return 56;
+case 57:return 89;
 break;
-case 58:yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2);return 97;
+case 58:return 56;
 break;
-case 59:yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2);return 98;
+case 59:yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2);return 97;
 break;
-case 60:return 96;
+case 60:yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2);return 98;
 break;
-case 61:return 31;
+case 61:return 96;
 break;
-case 62:return 35;
+case 62:return 31;
 break;
-case 63:return 5
+case 63:return 35;
 break;
-case 64:errores.push(new Error_(tError.length, "Lexico", `Caracter no valido: ${yy_.yytext}`, yy_.yylineno, yy_.yytext.length));
+case 64:return 5
+break;
+case 65:errores.push(new Error_(tError.length, "Lexico", `Caracter no valido: ${yy_.yytext}`, yy_.yylineno, yy_.yytext.length));
     return;
 break;
-case 65:console.log(yy_.yytext);
+case 66:console.log(yy_.yytext);
 break;
 }
 },
-rules: [/^(?:\s+\/\*([^*]|\*+[^*/])*\*+\/)/i,/^(?:\/\/.*[\n])/i,/^(?:[ \t\r\n]+)/i,/^(?:[0-9]+(\.[0-9]+)\b)/i,/^(?:[0-9]+\b)/i,/^(?:cout)/i,/^(?:<<)/i,/^(?:endl)/i,/^(?:if)/i,/^(?:else)/i,/^(?:tolower)/i,/^(?:toupper)/i,/^(?:round)/i,/^(?:do)/i,/^(?:while)/i,/^(?:return)/i,/^(?:break)/i,/^(?:continue)/i,/^(?:std::tostring)/i,/^(?:switch)/i,/^(?:case)/i,/^(?:default)/i,/^(?:for)/i,/^(?:new)/i,/^(?:void)/i,/^(?:length)/i,/^(?:typeof)/i,/^(?:c_str)/i,/^(?:execute)/i,/^(?:\+\+)/i,/^(?:--)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:\*)/i,/^(?:\/)/i,/^(?:pow)/i,/^(?:%)/i,/^(?:==)/i,/^(?:!=)/i,/^(?:<=)/i,/^(?:>=)/i,/^(?:<)/i,/^(?:>)/i,/^(?:\|\|)/i,/^(?:&&)/i,/^(?:!)/i,/^(?:\.)/i,/^(?:,)/i,/^(?:\()/i,/^(?:\))/i,/^(?:\{)/i,/^(?:\})/i,/^(?:\[)/i,/^(?:\])/i,/^(?:=)/i,/^(?:;)/i,/^(?:\?)/i,/^(?::)/i,/^(?:'([^\']|[\t]|[\n]|[\r]|[ ])')/i,/^(?:"([^\"]|[\t]|[\n]|[\r])*")/i,/^(?:false|true)/i,/^(?:int|double|bool|char|std::string)/i,/^(?:([a-zA-Z_][a-zA-Z0-9_]*)\b)/i,/^(?:$)/i,/^(?:.)/i,/^(?:.)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65],"inclusive":true}}
+rules: [/^(?:\s+\/\/.*)/i,/^(?:[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/])/i,/^(?:[ \t\r\n]+)/i,/^(?:\\t+)/i,/^(?:[0-9]+(\.[0-9]+)\b)/i,/^(?:[0-9]+\b)/i,/^(?:cout)/i,/^(?:<<)/i,/^(?:endl)/i,/^(?:if)/i,/^(?:else)/i,/^(?:tolower)/i,/^(?:toupper)/i,/^(?:round)/i,/^(?:do)/i,/^(?:while)/i,/^(?:return)/i,/^(?:break)/i,/^(?:continue)/i,/^(?:std::tostring)/i,/^(?:switch)/i,/^(?:case)/i,/^(?:default)/i,/^(?:for)/i,/^(?:new)/i,/^(?:void)/i,/^(?:length)/i,/^(?:typeof)/i,/^(?:c_str)/i,/^(?:execute)/i,/^(?:\+\+)/i,/^(?:--)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:\*)/i,/^(?:\/)/i,/^(?:pow)/i,/^(?:%)/i,/^(?:==)/i,/^(?:!=)/i,/^(?:<=)/i,/^(?:>=)/i,/^(?:<)/i,/^(?:>)/i,/^(?:\|\|)/i,/^(?:&&)/i,/^(?:!)/i,/^(?:\.)/i,/^(?:,)/i,/^(?:\()/i,/^(?:\))/i,/^(?:\{)/i,/^(?:\})/i,/^(?:\[)/i,/^(?:\])/i,/^(?:=)/i,/^(?:;)/i,/^(?:\?)/i,/^(?::)/i,/^(?:'([^\']|[\t]|[\n]|[\r]|[ ])')/i,/^(?:"([^\"]|[\t]|[\n]|[\r])*")/i,/^(?:false|true)/i,/^(?:int|double|bool|char|std::string)/i,/^(?:([a-zA-Z_][a-zA-Z0-9_]*)\b)/i,/^(?:$)/i,/^(?:.)/i,/^(?:.)/i],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66],"inclusive":true}}
 });
 return lexer;
 })();

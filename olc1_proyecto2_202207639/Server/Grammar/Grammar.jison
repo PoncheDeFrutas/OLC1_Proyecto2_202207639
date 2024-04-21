@@ -50,9 +50,10 @@
 
 /*Whitespaces and Comments*/
 \s+
-\/\*([^*]|\*+[^*/])*\*+\/   /*Ignore Comments*/
-"/""/".*[\n]                /*Ignore Comments*/
-[ \t\r\n]+                  /*Ignore Whitespaces*/
+"//".* {/* Ignore single line comments */}
+[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]  {/*Ignore Comments*/}
+[ \t\r\n]+                  {/*Ignore Whitespaces*/}
+\\t+ {/* Ignore tabs */}
 
 [0-9]+("."[0-9]+)\b         {return 'DOUBLE';}
 [0-9]+\b                    {return 'NUMBER';}
