@@ -5,6 +5,7 @@ import {Instruction} from "../Abstract/Instruction";
 import {Block} from "./Block";
 import {tError} from "../tConsole";
 import {Error_} from "../Error";
+import Counter from "../Symbol/Counter";
 
 
 export class FunctionValue extends Instruction {
@@ -116,5 +117,42 @@ export class FunctionValue extends Instruction {
                 `La función ${this.id} no existe`, this.line, this.column ))
 
         }
+    }
+
+    /*
+    * function_id ( params )
+    */
+    public getAst(last: string): string{
+        let result = "";
+        let counter = Counter.getInstance();
+        let functionNode = `n${counter.get()}`;
+        let lParenNode = `n${counter.get()}`;
+        result += `${functionNode}[label="${this.id}"];\n`;
+        result += `${lParenNode}[label="("];\n`;
+        result += `${last} -> ${functionNode};\n`;
+        result += `${last} -> ${lParenNode};\n`;
+
+        if (this.parameters.length != 0){
+            let first = `n${counter.get()}`;
+            result += `${first}[label="param"];\n`;
+            result += `${last} -> ${first};\n`;
+            result += this.parameters[0].getAst(first);
+            for (let i = 1; i < this.parameters.length; i++){
+                if (i < this.parameters.length){
+                    let comma = `n${counter.get()}`;
+                    result += `${comma}[label=","];\n`;
+                    result += `${last} -> ${comma};\n`;
+                }
+                let param = `n${counter.get()}`;
+                result += `${param}[label="param"];\n`;
+                result += `${last} -> ${param};\n`;
+                result += this.parameters[i].getAst(param);
+            }
+        }
+
+        let rParenNode = `n${counter.get()}`;
+        result += `${rParenNode}[label=")"];\n`;
+        result += `${last} -> ${rParenNode};\n`;
+        return result;
     }
 }

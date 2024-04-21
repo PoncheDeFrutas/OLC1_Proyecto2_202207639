@@ -25,5 +25,8 @@ class FN_IF extends Instruction_1.Instruction {
         }
         return null;
     }
+    getAst(last) {
+        return "";
+    }
 }
 exports.FN_IF = FN_IF;

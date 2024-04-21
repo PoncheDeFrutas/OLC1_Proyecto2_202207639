@@ -4,6 +4,7 @@ import { Expression } from "../Abstract/Expression";
 import { dataType } from "../Abstract/Result";
 import {tError} from "../tConsole";
 import {Error_} from "../Error";
+import Counter from "../Symbol/Counter";
 
 export class DeclarationVector extends Instruction{
 
@@ -77,5 +78,64 @@ export class DeclarationVector extends Instruction{
             environment.saveVectors(this.id, dominantType, valRows.value, 1, this.line, this.column);
         }
         environment.getVectors(this.id)?.defaultValues("VectorV", dominantType, defaultVal, this.line, this.column);
+    }
+
+    /*
+    *  type id([] | [][]) = new type [exp] | new type [exp][exp];
+    * */
+    public getAst(last: string): string{
+        let result = ""
+        let counter = Counter.getInstance()
+        let declarationNode = `n${counter.get()}`
+        let typeNode = `n${counter.get()}`
+        result += `${declarationNode}[label="Declaración Vector"];\n`
+        result += `${typeNode}[label="${this.type}"];\n`
+        result += `${last} -> ${declarationNode};\n`
+        result += `${declarationNode} -> ${typeNode};\n`
+        if (this.simple){
+            let idNode = `n${counter.get()}`
+            result += `${idNode}[label="${this.id}[]"];\n`
+            result += `${declarationNode} -> ${idNode};\n`
+        } else{
+            let idNode = `n${counter.get()}`
+            result += `${idNode}[label="${this.id}[][]"];\n`
+            result += `${declarationNode} -> ${idNode};\n`
+        }
+        let assignNode = `n${counter.get()}`
+        result += `${assignNode}[label="="];\n`
+        result += `${declarationNode} -> ${assignNode};\n`
+        let newNode = `n${counter.get()}`
+        result += `${newNode}[label="new"];\n`
+        result += `${declarationNode} -> ${newNode};\n`
+        let typeNode2 = `n${counter.get()}`
+        result += `${typeNode2}[label="${this.confirmType}"];\n`
+        result += `${declarationNode} -> ${typeNode2};\n`
+        let lbraceNode = `n${counter.get()}`
+        result += `${lbraceNode}[label="["];\n`
+        result += `${declarationNode} -> ${lbraceNode};\n`
+        let expNode = `n${counter.get()}`
+        result += `${expNode}[label="Expresion"];\n`
+        result += `${declarationNode} -> ${expNode};\n`
+        result += this.row.getAst(expNode);
+        let rbraceNode = `n${counter.get()}`
+        result += `${rbraceNode}[label="]"];\n`
+        result += `${declarationNode} -> ${rbraceNode};\n`
+
+        if (this.columns != null){
+            let lbraceNode2 = `n${counter.get()}`
+            result += `${lbraceNode2}[label="["];\n`
+            result += `${declarationNode} -> ${lbraceNode2};\n`
+            let expNode2 = `n${counter.get()}`
+            result += `${expNode2}[label="Expresion"];\n`
+            result += `${declarationNode} -> ${expNode2};\n`
+            result += this.columns.getAst(expNode2);
+            let rbraceNode2 = `n${counter.get()}`
+            result += `${rbraceNode2}[label="]"];\n`
+            result += `${declarationNode} -> ${rbraceNode2};\n`
+        }
+        let semicolonNode = `n${counter.get()}`
+        result += `${semicolonNode}[label=";"];\n`
+        result += `${declarationNode} -> ${semicolonNode};\n`
+        return result;
     }
 }

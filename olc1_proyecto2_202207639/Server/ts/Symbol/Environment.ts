@@ -1,8 +1,10 @@
 import { env } from 'process';
 import { Symbol } from './Symbol';
-import { dataType } from '../Abstract/Result';
+import {dataType, getDataTypeName} from '../Abstract/Result';
 import { Function } from "../Instruction/Function";
 import {Arrays} from "./Arrays";
+import {tSimbols} from "../tConsole";
+import {tablaSimbolos} from "../tablaSimbolos";
 
 export class Environment{
     public variables: Map<string, Symbol>;
@@ -25,6 +27,18 @@ export class Environment{
             throw Error("This ID is a function")
         }
         this.variables.set(id, new Symbol(id, type, value, line, column));
+        let newSymbol = new tablaSimbolos(tSimbols.length, id, getDataTypeName(type), "var", line, column);
+
+        let exists = tSimbols.some(symbol =>
+            symbol.tipo === newSymbol.tipo &&
+            symbol.ticpo2 === newSymbol.ticpo2 &&
+            symbol.linea === newSymbol.linea &&
+            symbol.columna === newSymbol.columna
+        );
+
+        if (!exists) {
+            tSimbols.push(newSymbol);
+        }
     }
 
     public saveVectors(id:string, type: dataType, rows:number, columns:number, line: number, column: number){
@@ -37,6 +51,18 @@ export class Environment{
             throw Error("This ID is a function")
         }
         this.vectors.set(id, new Arrays(id, type, rows, columns, line, column));
+        let newSymbol = new tablaSimbolos(tSimbols.length, id, getDataTypeName(type), "vector", line, column);
+
+        let exists = tSimbols.some(symbol =>
+            symbol.tipo === newSymbol.tipo &&
+            symbol.ticpo2 === newSymbol.ticpo2 &&
+            symbol.linea === newSymbol.linea &&
+            symbol.columna === newSymbol.columna
+        );
+
+        if (!exists) {
+            tSimbols.push(newSymbol);
+        }
     }
 
     public getVectors(id: string): Arrays | null | undefined {

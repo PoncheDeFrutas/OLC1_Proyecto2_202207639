@@ -37,3 +37,19 @@ export enum LogicalOp {
     OR,
     NOT,
 }
+
+export function getDataTypeName(value: dataType): string {
+    return dataType[value];
+}
+
+export function getArithmeticOpName(value: ArithmeticOp): string {
+    return ArithmeticOp[value];
+}
+
+export function getRelationalOpName(value: RelationalOp): string {
+    return RelationalOp[value];
+}
+
+export function getLogicalOpName(value: LogicalOp): string {
+    return LogicalOp[value];
+}

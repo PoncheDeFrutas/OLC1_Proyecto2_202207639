@@ -4,6 +4,7 @@ import {dataType} from "../Abstract/Result";
 import {Block} from "./Block";
 import {tError} from "../tConsole";
 import {Error_} from "../Error";
+import Counter from "../Symbol/Counter";
 
 export class Function extends Instruction{
 
@@ -50,4 +51,61 @@ export class Function extends Instruction{
         this.type = dominantType;
         environment.saveFunction(this.id, this);
     }
+
+    /*
+    * type id (parameters) block
+    */
+    public getAst(last: string): string{
+        let result = ""
+        let counter = Counter.getInstance()
+        let functionNode = `n${counter.get()}`
+        let typeNode = `n${counter.get()}`
+        let idNode = `n${counter.get()}`
+        let lParenNode = `n${counter.get()}`
+        result += `${functionNode}[label="Declaración Function"];\n`
+        result += `${typeNode}[label="${this.stype}"];\n`
+        result += `${idNode}[label="${this.id}"];\n`
+        result += `${lParenNode}[label="("];\n`
+        result += `${last} -> ${functionNode};\n`
+        result += `${functionNode} -> ${typeNode};\n`
+        result += `${functionNode} -> ${idNode};\n`
+        result += `${functionNode} -> ${lParenNode};\n`
+
+        if (this.parameters.length != 0){
+            for (let i = 0; i < this.parameters.length; i++){
+                let first = `n${counter.get()}`;
+                result += `${first}[label="param"];\n`;
+                result += `${functionNode} -> ${first};\n`;
+                let typeNode = `n${counter.get()}`;
+                let idNode = `n${counter.get()}`;
+                result += `${typeNode}[label="${this.parameters[i].type}"];\n`
+                if ( this.parameters[i].vector){
+                    if (this.parameters[i].simple){
+                        result += `${idNode}[label="${this.parameters[i].id}[]"];\n`
+                    } else{
+                        result += `${idNode}[label="${this.parameters[i].id}[][]"];\n`
+                    }
+                } else{
+                    result += `${idNode}[label="${this.parameters[i].id}"];\n`
+                }
+                result += `${first} -> ${typeNode};\n`
+                result += `${first} -> ${idNode};\n`
+                if (i < this.parameters.length - 1){
+                    let comma = `n${counter.get()}`;
+                    result += `${comma}[label=","];\n`;
+                    result += `${functionNode} -> ${comma};\n`;
+                }
+            }
+        }
+        let rParenNode = `n${counter.get()}`
+        result += `${rParenNode}[label=")"];\n`
+        result += `${functionNode} -> ${rParenNode};\n`
+        let blockNode = `n${counter.get()}`
+        result += `${blockNode}[label="Block"];\n`
+        result += `${functionNode} -> ${blockNode};\n`
+        result += this.block.getAst(blockNode)
+        return result
+    }
+
+
 }

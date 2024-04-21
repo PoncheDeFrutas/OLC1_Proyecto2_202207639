@@ -11,3 +11,15 @@ export function POST (path, content){
     )
     .then(response => response.json())
 }
+
+export function GET (path){
+    return fetch( path, {
+        method: 'GET',
+        headers:{
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+        },
+        }
+    )
+    .then(response => response.json())
+}

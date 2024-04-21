@@ -1,5 +1,6 @@
 import { Environment } from "../Symbol/Environment";
 import { Instruction } from "../Abstract/Instruction";
+import Counter from "../Symbol/Counter";
 
 export class Block extends Instruction {
     instructions: Instruction[]
@@ -26,5 +27,24 @@ export class Block extends Instruction {
             }
         }
         return null;
+    }
+
+    /*
+    * lbracket instructions rbracket
+    * lbracket rbracket
+    */
+    public getAst(last: string): string{
+        let result = ""
+        let counter = Counter.getInstance()
+        let lbracket = `n${counter.get()}`
+        result += `${lbracket}[label="{"];\n`
+        result += `${last} -> ${lbracket};\n`
+        for (const instruction of this.instructions) {
+            result += instruction.getAst(last)
+        }
+        let rbracket = `n${counter.get()}`
+        result += `${rbracket}[label="}"];\n`
+        result += `${last} -> ${rbracket};\n`
+        return result
     }
 }

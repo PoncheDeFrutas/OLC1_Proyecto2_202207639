@@ -4,6 +4,7 @@ import {dataType, Result} from "../Abstract/Result";
 import {FunctionValue} from "./FunctionValue";
 import {tError} from "../tConsole";
 import {Error_} from "../Error";
+import Counter from "../Symbol/Counter";
 
 export class execute extends Instruction {
 
@@ -27,5 +28,27 @@ export class execute extends Instruction {
                 return {value: null, type: dataType.NULL};
             }
         }
+    }
+
+    /*
+    * execute functionValue ;
+    */
+    public getAst(last: string): string{
+        let result = "";
+        let counter = Counter.getInstance();
+        let executeNodeT = `n${counter.get()}`;
+        let executeNode = `n${counter.get()}`;
+        let functionNode = `n${counter.get()}`;
+        result += `${executeNodeT}[label="I_execute"];\n`;
+        result += `${executeNode}[label="execute"];\n`;
+        result += `${functionNode}[label="functionValue"];\n`;
+        result += `${last} -> ${executeNodeT};\n`;
+        result += `${executeNodeT} -> ${executeNode};\n`;
+        result += `${executeNodeT} -> ${functionNode};\n`;
+        result += this.Function.getAst(functionNode);
+        let semicolonNode = `n${counter.get()}`;
+        result += `${semicolonNode}[label=";"];\n`;
+        result += `${executeNodeT} -> ${semicolonNode};\n`;
+        return result;
     }
 }

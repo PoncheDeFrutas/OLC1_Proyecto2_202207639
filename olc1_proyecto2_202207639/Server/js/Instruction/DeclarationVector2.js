@@ -1,4 +1,7 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeclarationVector2 = void 0;
 const Instruction_1 = require("../Abstract/Instruction");
@@ -6,6 +9,7 @@ const Expression_1 = require("../Abstract/Expression");
 const Result_1 = require("../Abstract/Result");
 const tConsole_1 = require("../tConsole");
 const Error_1 = require("../Error");
+const Counter_1 = __importDefault(require("../Symbol/Counter"));
 class DeclarationVector2 extends Instruction_1.Instruction {
     constructor(type, id, values, simple, line, column) {
         super(line, column);
@@ -98,6 +102,87 @@ class DeclarationVector2 extends Instruction_1.Instruction {
                 }
             }
         }
+    }
+    /*
+    * tipe id ([]|[][]) = EXPRESSION | EXPRESSION[] | EXPRESSION[][];
+    * */
+    getAst(last) {
+        let result = "";
+        let counter = Counter_1.default.getInstance();
+        let declarationNode = `n${counter.get()}`;
+        let typeNode = `n${counter.get()}`;
+        let idNode = `n${counter.get()}`;
+        result += `${declarationNode}[label="Declaración Vector"];\n`;
+        result += `${typeNode}[label="${this.type}"];\n`;
+        if (this.simple) {
+            result += `${idNode}[label="${this.id}[]"];\n`;
+        }
+        else {
+            result += `${idNode}[label="${this.id}[][]"];\n`;
+        }
+        result += `${last} -> ${declarationNode};\n`;
+        result += `${declarationNode} -> ${typeNode};\n`;
+        result += `${declarationNode} -> ${idNode};\n`;
+        let equalNode = `n${counter.get()}`;
+        result += `${equalNode}[label="="];\n`;
+        result += `${declarationNode} -> ${equalNode};\n`;
+        let expNodeL = `n${counter.get()}`;
+        result += `${expNodeL}[label="Expresion List"];\n`;
+        result += `${declarationNode} -> ${expNodeL};\n`;
+        if (this.values instanceof Expression_1.Expression) {
+            result += this.values.getAst(expNodeL);
+        }
+        else {
+            let lbraceNode = `n${counter.get()}`;
+            result += `${lbraceNode}[label="["];\n`;
+            result += `${expNodeL} -> ${lbraceNode};\n`;
+            if (!(this.values[0] instanceof Array)) {
+                for (let i = 0; i < this.values.length; i++) {
+                    let expNode = `n${counter.get()}`;
+                    result += `${expNode}[label="Expresion"];\n`;
+                    result += `${expNodeL} -> ${expNode};\n`;
+                    const exp = this.values[i];
+                    result += exp.getAst(expNode);
+                    if (i < this.values.length - 1) {
+                        let comaNode = `n${counter.get()}`;
+                        result += `${comaNode}[label=","];\n`;
+                        result += `${expNodeL} -> ${comaNode};\n`;
+                    }
+                }
+            }
+            else {
+                for (let i = 0; i < this.values.length; i++) {
+                    const column = this.values[i];
+                    let lbraceNode = `n${counter.get()}`;
+                    result += `${lbraceNode}[label="["];\n`;
+                    result += `${expNodeL} -> ${lbraceNode};\n`;
+                    for (let j = 0; j < column.length; j++) {
+                        let expNode = `n${counter.get()}`;
+                        result += `${expNode}[label="Expresion"];\n`;
+                        result += `${expNodeL} -> ${expNode};\n`;
+                        const exp = column[j];
+                        result += exp.getAst(expNode);
+                        if (j < column.length - 1) {
+                            let comaNode = `n${counter.get()}`;
+                            result += `${comaNode}[label=","];\n`;
+                            result += `${expNodeL} -> ${comaNode};\n`;
+                        }
+                        else {
+                            let rbraceNode = `n${counter.get()}`;
+                            result += `${rbraceNode}[label="]"];\n`;
+                            result += `${expNodeL} -> ${rbraceNode};\n`;
+                        }
+                    }
+                }
+            }
+            let rbraceNode = `n${counter.get()}`;
+            result += `${rbraceNode}[label="]"];\n`;
+            result += `${expNodeL} -> ${rbraceNode};\n`;
+        }
+        let semicolonNode = `n${counter.get()}`;
+        result += `${semicolonNode}[label=";"];\n`;
+        result += `${declarationNode} -> ${semicolonNode};\n`;
+        return result;
     }
 }
 exports.DeclarationVector2 = DeclarationVector2;

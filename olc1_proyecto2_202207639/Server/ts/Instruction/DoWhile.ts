@@ -4,6 +4,7 @@ import { Expression } from "../Abstract/Expression";
 import { dataType } from "../Abstract/Result";
 import {tError} from "../tConsole";
 import {Error_} from "../Error";
+import Counter from "../Symbol/Counter";
 
 export class DoWhile extends Instruction {
 
@@ -40,5 +41,40 @@ export class DoWhile extends Instruction {
                     `Tipo ${condition.type} no es valido para condion [Do While]`, this.line, this.column ))
             }
         } while (condition.value);
+    }
+
+    /*
+    * DO block WHILE ( expression ) ;
+    * */
+    public getAst(last: string): string{
+        let result = ""
+        let counter = Counter.getInstance()
+        let doNodeT = `n${counter.get()}`
+        let doNode = `n${counter.get()}`
+        let blockNode = `n${counter.get()}`
+        let whileNode = `n${counter.get()}`
+        let lParenNode = `n${counter.get()}`
+        let expressionNode = `n${counter.get()}`
+        let rParenNode = `n${counter.get()}`
+        let semicolonNode = `n${counter.get()}`
+        result += `${doNodeT}[label="I_DoWhile"];\n`
+        result += `${doNode}[label="do"];\n`
+        result += `${blockNode}[label="block"];\n`
+        result += `${whileNode}[label="while"];\n`
+        result += `${lParenNode}[label="("];\n`
+        result += `${expressionNode}[label="expression"];\n`
+        result += `${rParenNode}[label=")"];\n`
+        result += `${semicolonNode}[label=";"];\n`
+        result += `${last} -> ${doNodeT};\n`
+        result += `${doNodeT} -> ${doNode};\n`
+        result += `${doNodeT} -> ${blockNode};\n`
+        result += this.code.getAst(blockNode)
+        result += `${doNodeT} -> ${whileNode};\n`
+        result += `${doNodeT} -> ${lParenNode};\n`
+        result += `${doNodeT} -> ${expressionNode};\n`
+        result += this.condition.getAst(expressionNode)
+        result += `${doNodeT} -> ${rParenNode};\n`
+        result += `${doNodeT} -> ${semicolonNode};\n`
+        return result
     }
 }

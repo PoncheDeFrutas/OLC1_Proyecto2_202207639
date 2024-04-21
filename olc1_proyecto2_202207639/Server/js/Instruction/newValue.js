@@ -1,10 +1,14 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.newValue = void 0;
 const Instruction_1 = require("../Abstract/Instruction");
 const Result_1 = require("../Abstract/Result");
 const tConsole_1 = require("../tConsole");
 const Error_1 = require("../Error");
+const Counter_1 = __importDefault(require("../Symbol/Counter"));
 class newValue extends Instruction_1.Instruction {
     constructor(id, value, line, column) {
         super(line, column);
@@ -58,6 +62,31 @@ class newValue extends Instruction_1.Instruction {
             }
         }
         return null;
+    }
+    /*
+    * ID = EXP ;
+    * */
+    getAst(last) {
+        var _a;
+        let result = "";
+        let counter = Counter_1.default.getInstance();
+        let newValueNode = `n${counter.get()}`;
+        let idNode = `n${counter.get()}`;
+        let assignNode = `n${counter.get()}`;
+        let expNode = `n${counter.get()}`;
+        let semicolonNode = `n${counter.get()}`;
+        result += `${newValueNode}[label="I_NewValue"];\n`;
+        result += `${idNode}[label="${this.id}"];\n`;
+        result += `${assignNode}[label="="];\n`;
+        result += `${expNode}[label="Expresion"];\n`;
+        result += `${semicolonNode}[label=";"];\n`;
+        result += `${last} -> ${newValueNode};\n`;
+        result += `${newValueNode} -> ${idNode};\n`;
+        result += `${newValueNode} -> ${assignNode};\n`;
+        result += `${newValueNode} -> ${expNode};\n`;
+        result += (_a = this.value) === null || _a === void 0 ? void 0 : _a.getAst(expNode);
+        result += `${newValueNode} -> ${semicolonNode};\n`;
+        return result;
     }
 }
 exports.newValue = newValue;

@@ -11,4 +11,6 @@ export abstract class Expression {
     }
 
     public abstract interpreter(environment: Environment): Result;
+
+    public abstract getAst(last: string): string;
 }

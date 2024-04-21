@@ -4,6 +4,7 @@ import {Environment} from '../Symbol/Environment';
 import {dataType} from '../Abstract/Result';
 import {tError} from "../tConsole";
 import {Error_} from "../Error";
+import Counter from "../Symbol/Counter";
 
 export class newValue extends Instruction {
 
@@ -62,5 +63,30 @@ export class newValue extends Instruction {
             }
         }
         return null
+    }
+
+    /*
+    * ID = EXP ;
+    * */
+    public getAst(last: string): string{
+        let result = ""
+        let counter = Counter.getInstance()
+        let newValueNode = `n${counter.get()}`
+        let idNode = `n${counter.get()}`
+        let assignNode = `n${counter.get()}`
+        let expNode = `n${counter.get()}`
+        let semicolonNode = `n${counter.get()}`
+        result += `${newValueNode}[label="I_NewValue"];\n`
+        result += `${idNode}[label="${this.id}"];\n`
+        result += `${assignNode}[label="="];\n`
+        result += `${expNode}[label="Expresion"];\n`
+        result += `${semicolonNode}[label=";"];\n`
+        result += `${last} -> ${newValueNode};\n`
+        result += `${newValueNode} -> ${idNode};\n`
+        result += `${newValueNode} -> ${assignNode};\n`
+        result += `${newValueNode} -> ${expNode};\n`
+        result += this.value?.getAst(expNode)
+        result += `${newValueNode} -> ${semicolonNode};\n`
+        return result
     }
 }

@@ -3,6 +3,7 @@ import { Expression } from "../Abstract/Expression";
 import {dataType, Result} from "../Abstract/Result";
 import {tError} from "../tConsole";
 import {Error_} from "../Error";
+import Counter from "../Symbol/Counter";
 
 export class VectorValue extends Expression{
 
@@ -35,5 +36,42 @@ export class VectorValue extends Expression{
                 `Vector ${this.id} no existe`, this.line, this.column ))
         }
         return {value: vector.getValue(x.value,y).value, type: vector.type};
+    }
+
+    /*
+    * ID [exp]( | [exp])
+    * */
+    public getAst(last: string): string{
+        let result = ""
+        let counter = Counter.getInstance()
+        let vectorValueNodeT = `n${counter.get()}`
+        let idNode = `n${counter.get()}`
+        let lBracketNode = `n${counter.get()}`
+        let expNode = `n${counter.get()}`
+        let rBracketNode = `n${counter.get()}`
+        result += `${vectorValueNodeT}[label="VectorValue"];\n`
+        result += `${idNode}[label="${this.id}"];\n`
+        result += `${lBracketNode}[label="["];\n`
+        result += `${expNode}[label="Expresion"];\n`
+        result += `${rBracketNode}[label="]"];\n`
+        result += `${last} -> ${vectorValueNodeT};\n`
+        result += `${vectorValueNodeT} -> ${idNode};\n`
+        result += `${vectorValueNodeT} -> ${lBracketNode};\n`
+        result += `${vectorValueNodeT} -> ${expNode};\n`
+        result += this.x.getAst(expNode)
+        result += `${vectorValueNodeT} -> ${rBracketNode};\n`
+        if (this.y != null){
+            let lbracketNode = `n${counter.get()}`
+            let expNode = `n${counter.get()}`
+            let rbracketNode = `n${counter.get()}`
+            result += `${lbracketNode}[label="["];\n`
+            result += `${expNode}[label="Expresion"];\n`
+            result += `${rbracketNode}[label="]"];\n`
+            result += `${vectorValueNodeT} -> ${lbracketNode};\n`
+            result += `${vectorValueNodeT} -> ${expNode};\n`
+            result += this.y.getAst(expNode)
+            result += `${vectorValueNodeT} -> ${rbracketNode};\n`
+        }
+        return result
     }
 }

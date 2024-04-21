@@ -1,6 +1,5 @@
 /*-----------------------------------------------IMPORTS AND JS CODE--------------------------------------------------*/
 %{
-
     const { Error_ } = require('../js/Error');
     const { tError } = require('../js/tConsole');
     const { Arithmetic } = require('../js/Expression/Arithmetic');
@@ -40,6 +39,8 @@
     const { newValue } = require('../js/Instruction/newValue');
     const { newVectorValue } = require('../js/Instruction/newVectorValue');
     const { AST } = require('../js/AST');
+
+    let errores = [];
 %}
 /*------------------------------------------------LEXICAL ANALYZER----------------------------------------------------*/
 %lex
@@ -165,7 +166,8 @@
 <<EOF>> return 'EOF'
 
 /*Error*/
-. {tError.push(new Error_(tError.length, "Lexico", `Caracter no valido: ${yytext}`, yylineno, yytext.length));}
+. {errores.push(new Error_(tError.length, "Lexico", `Caracter no valido: ${yytext}`, yylineno, yytext.length));
+    return;}
 
 /lex
 
@@ -186,7 +188,7 @@
 %%
 
 program
-    : statements EOF                                        { return new AST($1); }
+    : statements EOF                                        { return new AST($1, errores); }
     ;
 
 statements
@@ -260,7 +262,7 @@ fn_while
     ;
 
 fn_DoWhile
-    : DO block WHILE LPAREN expression RPAREN     { $$ = new DoWhile($5, $2, @1.first_line, @1.first_column); }
+    : DO block WHILE LPAREN expression RPAREN SEMICOLON    { $$ = new DoWhile($5, $2, @1.first_line, @1.first_column); }
     ;
 
 transfer_sentence

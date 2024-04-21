@@ -1,4 +1,7 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FunctionValue = void 0;
 const Result_1 = require("../Abstract/Result");
@@ -6,6 +9,7 @@ const Environment_1 = require("../Symbol/Environment");
 const Instruction_1 = require("../Abstract/Instruction");
 const tConsole_1 = require("../tConsole");
 const Error_1 = require("../Error");
+const Counter_1 = __importDefault(require("../Symbol/Counter"));
 class FunctionValue extends Instruction_1.Instruction {
     constructor(id, parameters, enable, line, column) {
         super(line, column);
@@ -113,6 +117,40 @@ class FunctionValue extends Instruction_1.Instruction {
         else {
             throw tConsole_1.tError.push(new Error_1.Error_(tConsole_1.tError.length, "Semantico", `La función ${this.id} no existe`, this.line, this.column));
         }
+    }
+    /*
+    * function_id ( params )
+    */
+    getAst(last) {
+        let result = "";
+        let counter = Counter_1.default.getInstance();
+        let functionNode = `n${counter.get()}`;
+        let lParenNode = `n${counter.get()}`;
+        result += `${functionNode}[label="${this.id}"];\n`;
+        result += `${lParenNode}[label="("];\n`;
+        result += `${last} -> ${functionNode};\n`;
+        result += `${last} -> ${lParenNode};\n`;
+        if (this.parameters.length != 0) {
+            let first = `n${counter.get()}`;
+            result += `${first}[label="param"];\n`;
+            result += `${last} -> ${first};\n`;
+            result += this.parameters[0].getAst(first);
+            for (let i = 1; i < this.parameters.length; i++) {
+                if (i < this.parameters.length) {
+                    let comma = `n${counter.get()}`;
+                    result += `${comma}[label=","];\n`;
+                    result += `${last} -> ${comma};\n`;
+                }
+                let param = `n${counter.get()}`;
+                result += `${param}[label="param"];\n`;
+                result += `${last} -> ${param};\n`;
+                result += this.parameters[i].getAst(param);
+            }
+        }
+        let rParenNode = `n${counter.get()}`;
+        result += `${rParenNode}[label=")"];\n`;
+        result += `${last} -> ${rParenNode};\n`;
+        return result;
     }
 }
 exports.FunctionValue = FunctionValue;

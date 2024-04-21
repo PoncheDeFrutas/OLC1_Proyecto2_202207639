@@ -10,4 +10,6 @@ export abstract class Instruction {
     }
 
     public abstract interpreter(environment: Environment): any;
+
+    public abstract getAst(last: string): string;
 }

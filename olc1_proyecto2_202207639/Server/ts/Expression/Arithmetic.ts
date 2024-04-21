@@ -1,9 +1,10 @@
 import { env } from "process";
 import { Environment } from "../Symbol/Environment";
 import { Expression } from "../Abstract/Expression";
-import { ArithmeticOp, dataType, Result } from "../Abstract/Result";
+import {ArithmeticOp, dataType, getArithmeticOpName, Result} from "../Abstract/Result";
 import { tError } from "../tConsole";
 import {Error_} from "../Error";
+import Counter from "../Symbol/Counter";
 
 export class Arithmetic extends Expression{
     public left: Expression;
@@ -123,6 +124,66 @@ export class Arithmetic extends Expression{
             default:
                 return {value: null, type: dataType.NULL}
         }
+    }
+
+    /*
+    * Exp, op, Exp
+    *
+    * -, exp
+    *
+    * pow ( exp , exp )
+    *
+    * exp -> value
+    */
+    public getAst(last: string): string{
+        let counter = Counter.getInstance()
+        let result = ""
+        if (this.op == ArithmeticOp.UMINUS) {
+            let uminusNode = `n${counter.get()}`
+            let expNode = `n${counter.get()}`
+            result += `${uminusNode}[label="-"];\n`
+            result += `${expNode}[label="Exp"];\n`
+            result += `${last} -> ${uminusNode};\n`
+            result += `${last} -> ${expNode};\n`
+            result += this.left.getAst(expNode)
+            return result
+        } else if (this.op == ArithmeticOp.POW) {
+            let powNode = `n${counter.get()}`
+            let lParenNode = `n${counter.get()}`
+            let exp1Node = `n${counter.get()}`
+            let commaNode = `n${counter.get()}`
+            let exp2Node = `n${counter.get()}`
+            let rParenNode = `n${counter.get()}`
+            result += `${powNode}[label="Pow"];\n`
+            result += `${lParenNode}[label="("];\n`
+            result += `${exp1Node}[label="Exp"];\n`
+            result += `${commaNode}[label=","];\n`
+            result += `${exp2Node}[label="Exp"];\n`
+            result += `${rParenNode}[label=")"];\n`
+            result += `${last} -> ${powNode};\n`
+            result += `${last} -> ${lParenNode};\n`
+            result += `${last} -> ${exp1Node};\n`
+            result += this.left.getAst(exp1Node)
+            result += `${last} -> ${commaNode};\n`
+            result += `${last} -> ${exp2Node};\n`
+            result += this.right.getAst(exp2Node)
+            result += `${last} -> ${rParenNode};\n`
+            return result
+        }
+
+        let exp1 = `n${counter.get()}`
+        let op = `n${counter.get()}`
+        let exp2 = `n${counter.get()}`
+        let stringOp = getArithmeticOpName(this.op)
+        result += `${exp1}[label="Exp"];\n`
+        result += `${op}[label="${stringOp}"];\n`
+        result += `${exp2}[label="Exp"];\n`
+        result += `${last} -> ${exp1};\n`
+        result += this.left.getAst(exp1)
+        result += `${last} -> ${op};\n`
+        result += `${last} -> ${exp2};\n`
+        result += this.right.getAst(exp2)
+        return result
     }
 }
 

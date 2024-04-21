@@ -1,5 +1,6 @@
 import { Expression } from "../Abstract/Expression";
-import { dataType, Result } from "../Abstract/Result";
+import {dataType, getDataTypeName, Result} from "../Abstract/Result";
+import Counter from "../Symbol/Counter";
 
 export class Primitive extends Expression {
     exp: string;
@@ -26,5 +27,21 @@ export class Primitive extends Expression {
             default:
                 return {value: null, type: dataType.NULL};
         }
+    }
+
+    /*
+    * Primitive
+    * Primitive -> Value
+    * last -> Primitive
+    */
+    public getAst(last: string): string{
+        let counter = Counter.getInstance()
+        let primitiveNode = `n${counter.get()}`
+        let valueNode = `n${counter.get()}`
+        let result = `${primitiveNode}[label="Primitive"];\n`
+        result += `${valueNode}[label="${this.exp}"];\n`
+        result += `${primitiveNode} -> ${valueNode};\n`
+        result += `${last} -> ${primitiveNode};\n`
+        return result
     }
 }

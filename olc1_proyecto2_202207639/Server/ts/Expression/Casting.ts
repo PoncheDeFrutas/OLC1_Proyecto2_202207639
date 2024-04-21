@@ -3,6 +3,7 @@ import {Expression} from "../Abstract/Expression";
 import {dataType, Result} from "../Abstract/Result";
 import {tError} from "../tConsole";
 import {Error_} from "../Error";
+import Counter from "../Symbol/Counter";
 
 export class Casting extends Expression{
     private type: string;
@@ -71,5 +72,31 @@ export class Casting extends Expression{
                     `Opción casteable no valida ${this.type}`, this.line, this.column ))
         }
         return result;
+    }
+
+
+    /*
+    * ( type ) exp
+    * */
+    public getAst(last: string): string{
+        let result = ""
+        let counter = Counter.getInstance()
+        let castingNodeT = `n${counter.get()}`
+        let typeNode = `n${counter.get()}`
+        let expNode = `n${counter.get()}`
+        let lParenNode = `n${counter.get()}`
+        let rParenNode = `n${counter.get()}`
+        result += `${castingNodeT}[label="Casting"];\n`
+        result += `${typeNode}[label="${this.type}"];\n`
+        result += `${lParenNode}[label="("];\n`
+        result += `${expNode}[label="Expresion"];\n`
+        result += `${rParenNode}[label=")"];\n`
+        result += `${last} -> ${castingNodeT};\n`
+        result += `${castingNodeT} -> ${lParenNode};\n`
+        result += `${castingNodeT} -> ${typeNode};\n`
+        result += `${castingNodeT} -> ${expNode};\n`
+        result += this.value.getAst(expNode)
+        result += `${castingNodeT} -> ${rParenNode};\n`
+        return result
     }
 }

@@ -4,6 +4,7 @@ import { Expression } from "../Abstract/Expression";
 import { dataType } from "../Abstract/Result";
 import {tError} from "../tConsole";
 import {Error_} from "../Error";
+import Counter from "../Symbol/Counter";
 
 export class While extends Instruction {
 
@@ -39,5 +40,36 @@ export class While extends Instruction {
                 }
             }
         }
+    }
+
+
+    /*
+    * while ( exp ) block
+    * */
+    public getAst(last: string): string{
+        let result = ""
+        let counter = Counter.getInstance()
+        let whileNodeT = `n${counter.get()}`
+        let whileNode = `n${counter.get()}`
+        let lParenNode = `n${counter.get()}`
+        let expressionNode = `n${counter.get()}`
+        let rParenNode = `n${counter.get()}`
+        let blockNode = `n${counter.get()}`
+        result += `${whileNodeT}[label="I_While"];\n`
+        result += `${whileNode}[label="While"];\n`
+        result += `${lParenNode}[label="("];\n`
+        result += `${expressionNode}[label="Expression"];\n`
+        result += `${rParenNode}[label=")"];\n`
+        result += `${blockNode}[label="Block"];\n`
+        result += `${last} -> ${whileNodeT};\n`
+        result += `${whileNodeT} -> ${whileNode};\n`
+        result += `${whileNode} -> ${lParenNode};\n`
+        result += `${whileNode} -> ${expressionNode};\n`
+        result += this.condition.getAst(expressionNode);
+        result += `${whileNode} -> ${rParenNode};\n`
+        result += `${whileNode} -> ${blockNode};\n`
+        result += this.code.getAst(blockNode);
+        return result
+
     }
 }

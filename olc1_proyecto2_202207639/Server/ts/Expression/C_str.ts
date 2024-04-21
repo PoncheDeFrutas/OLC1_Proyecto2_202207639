@@ -1,9 +1,10 @@
 import {Environment} from "../Symbol/Environment";
 import {Expression} from "../Abstract/Expression";
-import {dataType, Result} from "../Abstract/Result";
+import {ArithmeticOp, dataType, Result} from "../Abstract/Result";
 import {Primitive} from "./Primitive";
 import {tError} from "../tConsole";
 import {Error_} from "../Error";
+import Counter from "../Symbol/Counter";
 
 export class C_str extends Expression{
 
@@ -27,5 +28,34 @@ export class C_str extends Expression{
         }
 
         return {value: array, type:dataType.CHAR};
+    }
+
+
+    /*
+    * exp . c_str ( ) ;
+    * */
+    public getAst(last: string): string{
+        let result = ""
+        let counter = Counter.getInstance()
+        let c_strNodeT = `n${counter.get()}`
+        let expNode = `n${counter.get()}`
+        let dotNode = `n${counter.get()}`
+        let c_strNode = `n${counter.get()}`
+        let lParenNode = `n${counter.get()}`
+        let rParenNode = `n${counter.get()}`
+        result += `${c_strNodeT}[label="C_str"];\n`
+        result += `${expNode}[label="Expresion"];\n`
+        result += `${dotNode}[label="."];\n`
+        result += `${c_strNode}[label="c_str"];\n`
+        result += `${lParenNode}[label="("];\n`
+        result += `${rParenNode}[label=")"];\n`
+        result += `${last} -> ${c_strNodeT};\n`
+        result += `${c_strNodeT} -> ${expNode};\n`
+        result += this.exp.getAst(expNode)
+        result += `${c_strNodeT} -> ${dotNode};\n`
+        result += `${c_strNodeT} -> ${c_strNode};\n`
+        result += `${c_strNodeT} -> ${lParenNode};\n`
+        result += `${c_strNodeT} -> ${rParenNode};\n`
+        return result
     }
 }

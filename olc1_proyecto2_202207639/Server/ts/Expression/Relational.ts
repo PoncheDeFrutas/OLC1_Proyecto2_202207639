@@ -1,9 +1,10 @@
 import { env } from "process";
 import { Environment } from "../Symbol/Environment";
 import {Expression} from "../Abstract/Expression";
-import {dataType, RelationalOp, Result} from "../Abstract/Result";
+import {dataType, getRelationalOpName, RelationalOp, Result} from "../Abstract/Result";
 import {tError} from "../tConsole";
 import {Error_} from "../Error";
+import Counter from "../Symbol/Counter";
 
 export class Relational extends Expression {
     public left: Expression;
@@ -48,5 +49,29 @@ export class Relational extends Expression {
             }
         }
         return {value: null, type: dataType.NULL};
+    }
+
+    /*
+    * exp op exp
+    * */
+    public getAst(last: string): string{
+        let result = ""
+        let counter = Counter.getInstance()
+        let relationalNodeT = `n${counter.get()}`
+        let relationalNode = `n${counter.get()}`
+        let exp1Node = `n${counter.get()}`
+        let opNode = `n${counter.get()}`
+        let exp2Node = `n${counter.get()}`
+        result += `${relationalNodeT}[label="Relational"];\n`
+        result += `${exp1Node}[label="Expresion"];\n`
+        result += `${opNode}[label="${getRelationalOpName(this.op)}"];\n`
+        result += `${exp2Node}[label="Expresion"];\n`
+        result += `${last} -> ${relationalNodeT};\n`
+        result += `${relationalNodeT} -> ${exp1Node};\n`
+        result += this.left.getAst(exp1Node)
+        result += `${relationalNodeT} -> ${opNode};\n`
+        result += `${relationalNodeT} -> ${exp2Node};\n`
+        result += this.right.getAst(exp2Node)
+        return result
     }
 }

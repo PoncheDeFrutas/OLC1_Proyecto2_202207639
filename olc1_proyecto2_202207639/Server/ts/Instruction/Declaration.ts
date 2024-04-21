@@ -4,6 +4,7 @@ import { Expression } from "../Abstract/Expression";
 import { dataType } from "../Abstract/Result";
 import {tError} from "../tConsole";
 import {Error_} from "../Error";
+import Counter from "../Symbol/Counter";
 
 export class Declaration extends Instruction {
 
@@ -62,6 +63,44 @@ export class Declaration extends Instruction {
                 environment.save(id, defaultVal, dominantType, this.line, this.column);
             });
         }
+    }
+
+    /*
+     * TYPE ID[] ( | = EXPRESSION) ;
+     */
+    public getAst(last: string): string{
+        let result = ""
+        let counter = Counter.getInstance()
+        let declarationNode = `n${counter.get()}`
+        let typeNode = `n${counter.get()}`
+        result += `${declarationNode}[label="Declaración"];\n`
+        result += `${typeNode}[label="${this.type}"];\n`
+        result += `${last} -> ${declarationNode};\n`
+        result += `${declarationNode} -> ${typeNode};\n`
+        for (let i = 0; i < this.id.length; i++){
+            let idNode = `n${counter.get()}`
+            result += `${idNode}[label="${this.id[i]}"];\n`
+            result += `${declarationNode} -> ${idNode};\n`
+            if (i < this.id.length - 1){
+                let comaNode = `n${counter.get()}`
+                result += `${comaNode}[label=","];\n`
+                result += `${declarationNode} -> ${comaNode};\n`
+            }
+        }
+        if (this.value != null){
+            let equalNode = `n${counter.get()}`
+            let expNode = `n${counter.get()}`
+            result += `${equalNode}[label="="];\n`
+            result += `${expNode}[label="Expresion"];\n`
+            result += `${declarationNode} -> ${equalNode};\n`
+            result += `${declarationNode} -> ${expNode};\n`
+            result += this.value.getAst(expNode);
+        }
+        let semicolonNode = `n${counter.get()}`
+        result += `${semicolonNode}[label=";"];\n`
+        result += `${declarationNode} -> ${semicolonNode};\n`
+        return result;
+
     }
 }
 

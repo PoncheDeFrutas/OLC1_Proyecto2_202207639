@@ -1,10 +1,14 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.newVectorValue = void 0;
 const Instruction_1 = require("../Abstract/Instruction");
 const Result_1 = require("../Abstract/Result");
 const tConsole_1 = require("../tConsole");
 const Error_1 = require("../Error");
+const Counter_1 = __importDefault(require("../Symbol/Counter"));
 class newVectorValue extends Instruction_1.Instruction {
     constructor(id, x, y, value, line, column) {
         super(line, column);
@@ -38,6 +42,52 @@ class newVectorValue extends Instruction_1.Instruction {
             (_b = environment.getVectors(this.id)) === null || _b === void 0 ? void 0 : _b.setValue(x.value, 0, "VectorV", vector.type, value.value, this.line, this.column);
         }
         return null;
+    }
+    /*
+    * ID ([exp]|[exp][exp]) = exp;
+    * */
+    getAst(last) {
+        let result = "";
+        let counter = Counter_1.default.getInstance();
+        let newVectorValueNodeT = `n${counter.get()}`;
+        let idNode = `n${counter.get()}`;
+        let rbracketNode = `n${counter.get()}`;
+        let exp1Node = `n${counter.get()}`;
+        let lbracketNode = `n${counter.get()}`;
+        result += `${newVectorValueNodeT}[label="I_newVectorValue"];\n`;
+        result += `${idNode}[label="${this.id}"];\n`;
+        result += `${lbracketNode}[label="["];\n`;
+        result += `${exp1Node}[label="Expresion"];\n`;
+        result += `${rbracketNode}[label="]"];\n`;
+        result += `${last} -> ${newVectorValueNodeT};\n`;
+        result += `${newVectorValueNodeT} -> ${idNode};\n`;
+        result += `${newVectorValueNodeT} -> ${lbracketNode};\n`;
+        result += `${newVectorValueNodeT} -> ${exp1Node};\n`;
+        result += this.x.getAst(exp1Node);
+        result += `${newVectorValueNodeT} -> ${rbracketNode};\n`;
+        if (this.y != null) {
+            let exp2Node = `n${counter.get()}`;
+            let lbracketNode2 = `n${counter.get()}`;
+            let rbracketNode2 = `n${counter.get()}`;
+            result += `${lbracketNode2}[label="["];\n`;
+            result += `${exp2Node}[label="Expresion"];\n`;
+            result += `${rbracketNode2}[label="]"];\n`;
+            result += `${newVectorValueNodeT} -> ${lbracketNode2};\n`;
+            result += `${newVectorValueNodeT} -> ${exp2Node};\n`;
+            result += this.y.getAst(exp2Node);
+            result += `${newVectorValueNodeT} -> ${rbracketNode2};\n`;
+        }
+        let equalNode = `n${counter.get()}`;
+        let expNode = `n${counter.get()}`;
+        let semicolonNode = `n${counter.get()}`;
+        result += `${equalNode}[label="="];\n`;
+        result += `${expNode}[label="Expresion"];\n`;
+        result += `${semicolonNode}[label=";"];\n`;
+        result += `${newVectorValueNodeT} -> ${equalNode};\n`;
+        result += `${newVectorValueNodeT} -> ${expNode};\n`;
+        result += this.value.getAst(expNode);
+        result += `${newVectorValueNodeT} -> ${semicolonNode};\n`;
+        return result;
     }
 }
 exports.newVectorValue = newVectorValue;

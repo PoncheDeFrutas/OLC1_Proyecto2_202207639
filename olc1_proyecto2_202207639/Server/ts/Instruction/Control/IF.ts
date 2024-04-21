@@ -31,4 +31,8 @@ export class FN_IF extends Instruction {
         }
         return null
     }
+
+    public getAst(last: string): string{
+        return ""
+    }
 }
