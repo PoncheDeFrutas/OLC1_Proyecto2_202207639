@@ -1,3 +1,5 @@
+import { Environment } from "../Symbol/Environment";
+
 export abstract class Instruction {
     public line: number;
     public column: number;
@@ -7,5 +9,7 @@ export abstract class Instruction {
         this.column = column;
     }
 
-    public abstract interpreter(tConsole:string[]):null
+    public abstract interpreter(environment: Environment): any;
+
+    public abstract getAst(last: string): string;
 }

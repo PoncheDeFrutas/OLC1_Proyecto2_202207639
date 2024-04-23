@@ -1,4 +1,5 @@
 import { Result } from "./Result";
+import { Environment } from "../Symbol/Environment";
 
 export abstract class Expression {
     public line: number;
@@ -9,5 +10,7 @@ export abstract class Expression {
         this.column = column;
     }
 
-    public abstract interpreter(): Result;
+    public abstract interpreter(environment: Environment): Result;
+
+    public abstract getAst(last: string): string;
 }

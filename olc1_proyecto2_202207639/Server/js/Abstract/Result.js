@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LogicalOp = exports.RelationalOp = exports.ArithmeticOp = exports.dataType = void 0;
+exports.getLogicalOpName = exports.getRelationalOpName = exports.getArithmeticOpName = exports.getDataTypeName = exports.LogicalOp = exports.RelationalOp = exports.ArithmeticOp = exports.dataType = void 0;
 var dataType;
 (function (dataType) {
     dataType[dataType["NUMBER"] = 0] = "NUMBER";
@@ -36,3 +36,19 @@ var LogicalOp;
     LogicalOp[LogicalOp["OR"] = 1] = "OR";
     LogicalOp[LogicalOp["NOT"] = 2] = "NOT";
 })(LogicalOp || (exports.LogicalOp = LogicalOp = {}));
+function getDataTypeName(value) {
+    return dataType[value];
+}
+exports.getDataTypeName = getDataTypeName;
+function getArithmeticOpName(value) {
+    return ArithmeticOp[value];
+}
+exports.getArithmeticOpName = getArithmeticOpName;
+function getRelationalOpName(value) {
+    return RelationalOp[value];
+}
+exports.getRelationalOpName = getRelationalOpName;
+function getLogicalOpName(value) {
+    return LogicalOp[value];
+}
+exports.getLogicalOpName = getLogicalOpName;
