@@ -63,6 +63,9 @@ class AST {
         for (let index = 0; index < this.tError.length; index++) {
             exit += this.tError[index].toString() + "\n";
         }
+        for (let index = 0; index < tConsole_1.tError.length; index++) {
+            exit += tConsole_1.tError[index].toString() + "\n";
+        }
         this.tError = [];
         return exit.replace("\\n", "\n").replace("\\t", "\t").replace("\\\"", "\"").replace("\\\'", "\'").replace("\\", "\\");
     }
@@ -70,20 +73,26 @@ class AST {
         return this.AstDot;
     }
     getErrorHtml() {
-        let text = "<table><tr><th>ID</th><th>Type</th><th>Message</th><th>Line</th><th>Column</th></tr>";
+        let text = `<table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; width: 100%;">`;
+        text += `<caption>Tabla de Errores</caption>`;
+        text += `<tr style="background-color: #f2f2f2;"><th>ID</th><th>Type</th><th>Message</th><th>Line</th><th>Column</th></tr>`;
         for (let index = 0; index < this.tError.length; index++) {
             let error = this.tError[index];
-            text += `<tr><td>${error.id}</td><td>${error.type}</td><td>${error.message}</td><td>${error.line}</td><td>${error.column}</td></tr>`;
+            let rowColor = index % 2 === 0 ? '#f2f2f2' : '#ffffff';
+            text += `<tr style="background-color: ${rowColor};"><td>${error.id}</td><td>${error.type}</td><td>${error.message}</td><td>${error.line}</td><td>${error.column}</td></tr>`;
         }
         text += "</table>";
         this.tError = [];
         return text;
     }
     getSimbolsHtml() {
-        let text = "<table><tr><th>Num</th><th>Id</th><th>Type</th><th>Type2</th><th>Line</th><th>Column</th></tr>";
+        let text = `<table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; width: 100%;">`;
+        text += `<caption>Tabla de Simbolos</caption>`;
+        text += `<tr style="background-color: #f2f2f2;"><th>Num</th><th>Id</th><th>Type</th><th>Type2</th><th>Line</th><th>Column</th></tr>`;
         for (let index = 0; index < this.tSimbols.length; index++) {
             let simbol = this.tSimbols[index];
-            text += `<tr><td>${simbol.num}</td><td>${simbol.id}</td><td>${simbol.tipo}</td><td>${simbol.ticpo2}</td><td>${simbol.linea}</td><td>${simbol.columna}</td></tr>`;
+            let rowColor = index % 2 === 0 ? '#f2f2f2' : '#ffffff';
+            text += `<tr style="background-color: ${rowColor};"><td>${simbol.num}</td><td>${simbol.id}</td><td>${simbol.tipo}</td><td>${simbol.ticpo2}</td><td>${simbol.linea}</td><td>${simbol.columna}</td></tr>`;
         }
         this.tSimbols = [];
         return text + "</table>";

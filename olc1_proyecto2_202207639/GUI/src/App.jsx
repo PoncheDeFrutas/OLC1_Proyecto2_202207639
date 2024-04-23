@@ -6,7 +6,6 @@ function App() {
 
   return (
       <>
-        <h1>Interfaz</h1>
         <EditorT/>
       </>
   )

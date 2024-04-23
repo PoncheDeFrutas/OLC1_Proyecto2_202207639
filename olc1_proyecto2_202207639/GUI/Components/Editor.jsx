@@ -8,10 +8,13 @@ import {TransformComponent, TransformWrapper} from "react-zoom-pan-pinch";
 
 export function EditorT() {
     const editorRef = useRef(null);
+    const [editorTemp, setEditorTemp] = useState("")
     const [result,setResult] = useState("")
     const [AST, setAST] = useState("")
     const [ERRORS, setERRORS] = useState("")
     const [Simbols, setSimbols] = useState("")
+    const [view, setView] = useState("editor");
+
     function handleEditorDidMount(editor, monaco) {
         editorRef.current = editor;
     }
@@ -19,39 +22,60 @@ export function EditorT() {
     function showValue() {
         POST("http://localhost:3000/interpreter",editorRef.current.getValue()).then(res=>
         {
-            console.log(res.result)
+            setEditorTemp(editorRef.current.getValue())
             setAST("")
             setERRORS("")
             setSimbols("")
             setResult(res.result)
+            setView("editor");
         })
+    }
+
+    function editor() {
+        if (editorTemp) {
+            setTimeout(() => {
+                editorRef.current.setValue(editorTemp);
+            }, 1000);
+        } else {
+            console.log("No hay texto para colocar en el editor.");
+        }
+        setView("editor");
     }
 
     function getAst() {
-        GET("http://localhost:3000/ast").then(res=>
-        {
-            console.log("AST")
-            console.log(res.result)
-            setAST(res.result)
-        })
+        if (AST === ""){
+            GET("http://localhost:3000/ast").then(res=>
+            {
+                setAST(res.result)
+                setView("ast");
+            })
+        } else{
+            setView("ast");
+        }
     }
 
     function getErrors(){
-        GET("http://localhost:3000/errors").then(res=>
-        {
-            console.log("Errores")
-            console.log(res.result)
-            setERRORS(res.result)
-        })
+        if (ERRORS === ""){
+            GET("http://localhost:3000/errors").then(res=>
+            {
+                setERRORS(res.result)
+                setView("errors");
+            })
+        } else{
+            setView("errors");
+        }
     }
 
     function getSimbols(){
-        GET("http://localhost:3000/simbols").then(res=>
-        {
-            console.log("Simbolos")
-            console.log(res.result)
-            setSimbols(res.result)
-        })
+        if (Simbols === ""){
+            GET("http://localhost:3000/simbols").then(res=>
+            {
+                setSimbols(res.result)
+                setView("simbols");
+            })
+        } else{
+            setView("simbols");
+        }
     }
 
     function newArchive(){
@@ -60,6 +84,8 @@ export function EditorT() {
         setERRORS("")
         setSimbols("")
         editorRef.current.setValue("")
+        setView("editor");
+
     }
 
     function saveFile() {
@@ -87,6 +113,8 @@ export function EditorT() {
         } else {
             console.log("No se seleccionó un archivo .sc");
         }
+        setView("editor");
+
     }
 
     return (
@@ -94,51 +122,59 @@ export function EditorT() {
             <div style={{display: 'flex', justifyContent: 'center', gap: '10px'}}>
                 <button onClick={newArchive}>Nuevo Archivo</button>
                 <button onClick={saveFile}>Guardar</button>
-                <input type="file" accept=".sc" onChange={openFile}/>
+                <button onClick={editor}>Editor</button>
+                <label htmlFor="file-upload" style={{display: 'inline-block', padding: '10px', backgroundColor: '#000000', color: 'white', cursor: 'pointer'}}>
+                    Subir Archivo
+                </label>
+                <input id="file-upload" type="file" accept=".sc" onChange={openFile} style={{display: 'none'}}/>
                 <button onClick={getErrors}>Errores</button>
                 <button onClick={getSimbols}>Simbolos</button>
                 <button onClick={showValue}>Interpretar</button>
                 <button onClick={getAst}>AST</button>
             </div>
 
-            <div style={{display: 'flex', alignItems: "center"}}>
-                <Editor
-                    height={"80vh"}
-                    width={"50vw"}
-                    defaultLanguage="javascript"
-                    defaultValue="// some comment"
-                    theme='vs-dark'
-                    onMount={handleEditorDidMount}
-                />
-                <textarea value={result} cols={70} rows={27} readOnly/>
-            </div>
+            {view === "editor" && (
+                <div style={{display: 'flex', alignItems: "center"}}>
+                    <Editor
+                        height={"80vh"}
+                        width={"50vw"}
+                        defaultLanguage="javascript"
+                        defaultValue="// some comment"
+                        theme='vs-dark'
+                        onMount={handleEditorDidMount}
+                    />
+                    <textarea value={result} cols={70} rows={35} readOnly/>
+                </div>
+            )}
 
-
-            <div style={{width: '90vw', height: '500px'}}>
-                <TransformWrapper
-                    defaultScale={1}
-                    defaultPositionX={0}
-                    defaultPositionY={0}
-                    maxScale={20}
-                >
-                    {({zoomIn, zoomOut, resetTransform, ...rest}) => (
-                        <React.Fragment>
-                            <div className="tools">
-                                <button onClick={() => zoomIn()}>+</button>
-                                <button onClick={() => zoomOut()}>-</button>
-                                <button onClick={() => resetTransform()}>x</button>
-                            </div>
-                            <TransformComponent>
-                                <div style={{width: '80vw', height: '500px', overflow: 'auto'}}>
-                                    {AST && <Graphviz dot={AST}/>}
+            {view === "ast" && (
+                <div style={{width: '85vw', height: '500px'}}>
+                    <TransformWrapper
+                        defaultScale={1}
+                        defaultPositionX={0}
+                        defaultPositionY={0}
+                        maxScale={20}
+                    >
+                        {({zoomIn, zoomOut, resetTransform, ...rest}) => (
+                            <React.Fragment>
+                                <div className="tools">
+                                    <button onClick={() => zoomIn()}>+</button>
+                                    <button onClick={() => zoomOut()}>-</button>
+                                    <button onClick={() => resetTransform()}>x</button>
                                 </div>
-                            </TransformComponent>
-                        </React.Fragment>
-                    )}
-                </TransformWrapper>
-            </div>
-            <div dangerouslySetInnerHTML={{__html: ERRORS}}/>
-            <div dangerouslySetInnerHTML={{__html: Simbols}}/>
+                                <TransformComponent>
+                                    <div style={{width: '95vw', height: '500px', overflow: 'auto'}}>
+                                        {AST && <Graphviz dot={AST}/>}
+                                    </div>
+                                </TransformComponent>
+                            </React.Fragment>
+                        )}
+                    </TransformWrapper>
+                </div>
+            )}
+
+            {view === "errors" && <div dangerouslySetInnerHTML={{__html: ERRORS}}/>}
+            {view === "simbols" && <div dangerouslySetInnerHTML={{__html: Simbols}}/>}
         </>
     );
 }
