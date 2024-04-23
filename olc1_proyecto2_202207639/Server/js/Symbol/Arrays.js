@@ -20,6 +20,9 @@ class Arrays {
         return this.values[x][y];
     }
     setValue(x, y, id, type, value, line, column) {
+        if (x < 0 || x >= this.values.length || y < 0 || y >= this.values[0].length) {
+            throw Error("Index out of bounds");
+        }
         this.values[x][y] = new Symbol_1.Symbol(id, type, value, line, column);
     }
     defaultValues(id, type, value, line, column) {
@@ -28,6 +31,9 @@ class Arrays {
                 this.values[i][j] = new Symbol_1.Symbol(id, type, value, line, column);
             }
         }
+    }
+    setVector(vector) {
+        this.values = vector;
     }
 }
 exports.Arrays = Arrays;

@@ -1,5 +1,7 @@
 /*-----------------------------------------------IMPORTS AND JS CODE--------------------------------------------------*/
 %{
+    const { Error_ } = require('../js/Error');
+    const { tError } = require('../js/tConsole');
     const { Arithmetic } = require('../js/Expression/Arithmetic');
     const { Relational } = require('../js/Expression/Relational');
     const { Logical } = require('../js/Expression/Logical');
@@ -9,14 +11,18 @@
     const { toLowUp } = require('../js/Expression/toLowUp');
     const { Round } = require('../js/Expression/Round');
     const { ToString } = require('../js/Expression/ToString');
+    const { Length } = require('../js/Expression/Length');
+    const { Typeof } = require('../js/Expression/Typeof')
     const { VectorValue } = require('../js/Expression/VectorValue');
-    const { ArithmeticOp, RelationalOp, LogicalOp, Result, dataType } = require('../js/Expression/Result');
+    const { C_str } = require('../js/Expression/C_str');
+    const { ArithmeticOp, RelationalOp, LogicalOp, Result, dataType } = require('../js/Abstract/Result');
     const { Cout } = require('../js/Instruction/Cout');
     const { Block } = require('../js/Instruction/Block');
+    const { execute } = require('../js/Instruction/execute');
     const { Declaration } = require('../js/Instruction/Declaration');
     const { DeclarationVector } = require('../js/Instruction/DeclarationVector');
     const { DeclarationVector2 } = require('../js/Instruction/DeclarationVector2');
-    const { IdValue } = require('../js/Instruction/IdValue');
+    const { IdValue } = require('../js/Expression/IdValue');
     const { FN_IF } = require('../js/Instruction/Control/IF');
     const { While } = require('../js/Instruction/While');
     const { DoWhile } = require('../js/Instruction/DoWhile');
@@ -27,23 +33,27 @@
     const { Case } = require('../js/Instruction/Case');
     const { Default } = require('../js/Instruction/Default');
     const { For } = require('../js/Instruction/For');
+    const { Function } = require('../js/Instruction/Function');
+    const { FunctionValue } = require('../js/Instruction/FunctionValue');
     const { IncDecFunction } = require('../js/Instruction/IncDecFunction');
     const { newValue } = require('../js/Instruction/newValue');
     const { newVectorValue } = require('../js/Instruction/newVectorValue');
     const { AST } = require('../js/AST');
+
+    let errores = [];
 %}
 /*------------------------------------------------LEXICAL ANALYZER----------------------------------------------------*/
 %lex
-%options case-insensitive
-
+%options flex case-insensitive
 
 %%
 
 /*Whitespaces and Comments*/
 \s+
-\/\*([^*]|\*+[^*/])*\*+\/   /*Ignore Comments*/
-"/""/".*[\n]                /*Ignore Comments*/
-[ \t\r\n]+                  /*Ignore Whitespaces*/
+"//".* {/* Ignore single line comments */}
+[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]  {/*Ignore Comments*/}
+[ \t\r\n]+                  {/*Ignore Whitespaces*/}
+\\t+ {/* Ignore tabs */}
 
 [0-9]+("."[0-9]+)\b         {return 'DOUBLE';}
 [0-9]+\b                    {return 'NUMBER';}
@@ -89,6 +99,22 @@
 /*Vector*/
 "new"   {return 'NEW';}
 
+/*Functions*/
+"void" {return 'VOID';}
+
+/*Length*/
+"length" {return 'LENGTH'}
+
+/*Typeof*/
+"typeof" {return 'TYPEOF'}
+
+/*C_str*/
+"c_str" {return 'C_STR'}
+
+/*Execute*/
+"execute" {return 'EXECUTE'}
+
+
 /*Incremental and Decremental*/
 "++"    {return 'INC';}
 "--"    {return 'DEC';}
@@ -115,6 +141,7 @@
 "!"     {return 'NOT';}
 
 /*Punctuation*/
+"."     {return 'DOT';}
 ","     {return 'COMMA';}
 "("     {return 'LPAREN';}
 ")"     {return 'RPAREN';}
@@ -140,12 +167,12 @@
 <<EOF>> return 'EOF'
 
 /*Error*/
-. {console.error("Error: Caracter inesperado: " + yytext + " Linea: " + yylloc.first_line + " Columna: " + yylloc.first_column);}
+. {errores.push(new Error_(tError.length, "Lexico", `Caracter no valido: ${yytext}`, yylineno, yytext.length));
+    return;}
 
 /lex
 
 /*Precedence------------*/
-
 %right 'TYPE'
 %right 'TERNARY'
 %left 'OR'
@@ -156,15 +183,13 @@
 %left 'MOD', 'DIV', 'MUL'
 %nonassoc 'POW'
 %right UMINUS
-
-
+%right 'DOT'
 /*-----------------------------------------------SINTACTIC ANALYZER---------------------------------------------------*/
 %start program
-
 %%
 
 program
-    : statements EOF                                        { return new AST($1); }
+    : statements EOF                                        { return new AST($1, errores); }
     ;
 
 statements
@@ -178,7 +203,14 @@ statement
     | vectors                                               { $$ = $1; }
     | increment_decrement SEMICOLON                         { $$ = $1; }
     | transfer_sentence                                     { $$ = $1; }
+    | general_functions                                     { $$ = $1; }
+    | execute                                               { $$ = $1; }
     ;
+
+execute
+    : EXECUTE function_value SEMICOLON                      { $$ = new execute($2, @1.first_line, @1.first_column); }
+    ;
+
 
 functions
     : fn_count                                              { $$ = $1; }
@@ -190,8 +222,8 @@ functions
     ;
 
 var_cases
-    : var_edition  SEMICOLON                            { $$ = $1; }
-    | var_declaration SEMICOLON                         { $$ = $1; }
+    : var_edition SEMICOLON                        { $$ = $1; }
+    | var_declaration SEMICOLON                    { $$ = $1; }
     ;
 
 fn_for
@@ -231,11 +263,12 @@ fn_while
     ;
 
 fn_DoWhile
-    : DO block WHILE LPAREN expression RPAREN     { $$ = new DoWhile($5, $2, @1.first_line, @1.first_column); }
+    : DO block WHILE LPAREN expression RPAREN SEMICOLON    { $$ = new DoWhile($5, $2, @1.first_line, @1.first_column); }
     ;
 
 transfer_sentence
     : RETURN expression SEMICOLON                           { $$ = new Return($2, @1.first_line, @1.first_column); }
+    | RETURN  SEMICOLON                                     { $$ = new Return(null, @1.first_line, @1.first_column); }
     | BREAK SEMICOLON                                       { $$ = new Break(@1.first_line, @1.first_column);}
     | CONTINUE SEMICOLON                                    { $$ = new Continue(@1.first_line, @1.first_column);}
     ;
@@ -283,8 +316,24 @@ expression
     | round                         { $$ = $1; }
     | ToString                      { $$ = $1; }
     | data_type                     { $$ = $1; }
+    | function_value                { $$ = $1; }
+    | length                        { $$ = $1; }
+    | typeof                        { $$ = $1; }
     | LPAREN expression RPAREN      { $$ = $2; }
     ;
+
+C_str
+    : expression DOT C_STR LPAREN RPAREN { $$ = new C_str($1, @3.first_line, @3.first_column); }
+    ;
+
+typeof
+    : TYPEOF LPAREN expression RPAREN { $$ = new Typeof($3, @1.first_line, @1.first_column) }
+    ;
+
+length
+    : expression DOT LENGTH LPAREN RPAREN   { $$ = new Length($1, @3.first_line, @3.first_column); }
+    ;
+
 
 operations
     : RES expression %prec UMINUS   { $$ = new Arithmetic($2, $2, ArithmeticOp.UMINUS, @1.first_line, @1.first_column); }
@@ -358,14 +407,26 @@ block
     | LBRACE RBRACE                 { $$ = new Block([], @1.first_line, @1.first_column); }
     ;
 
-
 vectors
-    : TYPE ID LBRACKET RBRACKET ASSIGN NEW TYPE LBRACKET expression RBRACKET SEMICOLON { $$ = new DeclarationVector($1, $2, $7, $9, null, true, @1.first_line, @1.first_column); }
-    | TYPE ID LBRACKET RBRACKET LBRACKET RBRACKET ASSIGN NEW TYPE LBRACKET expression RBRACKET LBRACKET expression RBRACKET SEMICOLON { $$ = new DeclarationVector($1, $2, $9, $11, $14, false, @1.first_line, @1.first_column); }
-    | TYPE ID LBRACKET RBRACKET ASSIGN LBRACKET value_list RBRACKET SEMICOLON { $$ = new DeclarationVector2($1, $2, $7, true, @1.first_line, @1.first_column); }
-    | TYPE ID LBRACKET RBRACKET LBRACKET RBRACKET ASSIGN LBRACKET list_value_list RBRACKET SEMICOLON { $$ = new DeclarationVector2($1, $2, $9, false, @1.first_line, @1.first_column); }
-    | ID LBRACKET expression RBRACKET ASSIGN expression SEMICOLON { $$ = new newVectorValue($1, $3, null, $6, @1.first_line, @1.first_column); }
+    : vectors_declaration SEMICOLON          { $$ = $1; }
+    | vector_modification           { $$ = $1; }
+    ;
+
+vectors_declaration
+    : TYPE ID LBRACKET RBRACKET ASSIGN NEW TYPE LBRACKET expression RBRACKET  { $$ = new DeclarationVector($1, $2, $7, $9, null, true, @1.first_line, @1.first_column); }
+    | TYPE ID LBRACKET RBRACKET LBRACKET RBRACKET ASSIGN NEW TYPE LBRACKET expression RBRACKET LBRACKET expression RBRACKET  { $$ = new DeclarationVector($1, $2, $9, $11, $14, false, @1.first_line, @1.first_column); }
+    | TYPE ID LBRACKET RBRACKET ASSIGN vector_assignation  { $$ = new DeclarationVector2($1, $2, $6, true, @1.first_line, @1.first_column); }
+    | TYPE ID LBRACKET RBRACKET LBRACKET RBRACKET ASSIGN LBRACKET list_value_list RBRACKET  { $$ = new DeclarationVector2($1, $2, $9, false, @1.first_line, @1.first_column); }
+    ;
+
+vector_modification
+    : ID LBRACKET expression RBRACKET ASSIGN expression SEMICOLON { $$ = new newVectorValue($1, $3, null, $6, @1.first_line, @1.first_column); }
     | ID LBRACKET expression RBRACKET LBRACKET expression RBRACKET ASSIGN expression SEMICOLON  { $$ = new newVectorValue($1, $3, $6, $9, @1.first_line, @1.first_column); }
+    ;
+
+vector_assignation
+    : C_str                                            { $$ = $1; }
+    | LBRACKET value_list RBRACKET                      { $$ = $2; }
     ;
 
 list_value_list
@@ -376,4 +437,54 @@ list_value_list
 value_list:
     | value_list COMMA expression       { $1.push($3); $$ = $1; }
     | expression                        { $$ = [$1]; }
+    ;
+
+general_functions
+    : function_declaration      { $$ = $1 }
+    | method_declaration        { $$ = $1 }
+    | function_value2  SEMICOLON          { $$ = $1 }
+    ;
+
+
+function_declaration
+    : TYPE ID LPAREN parameter_cases RPAREN block     { $$ = new Function($1, $2, $4, $6, @1.first_line, @1.first_column); }
+    ;
+
+method_declaration
+    : VOID ID LPAREN parameter_cases RPAREN block     { $$ = new Function($1, $2, $4, $6, @1.first_line, @1.first_column); }
+    ;
+
+value_list2
+    : /* empty */ { $$ = []; }
+    | non_empty_value_list  { $$ = $1; }
+    ;
+
+non_empty_value_list
+    : non_empty_value_list COMMA expression { $1.push($3); $$ = $1; }
+    | expression { $$ = [$1]; }
+    ;
+
+function_value
+    : ID LPAREN value_list2 RPAREN { $$ = new FunctionValue($1, $3, true,@1.first_line, @1.first_column); }
+    ;
+
+function_value2
+    : ID LPAREN value_list2 RPAREN { $$ = new FunctionValue($1, $3, false,@1.first_line, @1.first_column); }
+    ;
+
+parameter_cases
+    : parameter_list        { $$ = $1; }
+    |                       { $$ = []; }
+    ;
+
+
+parameter_list
+    : parameter_list COMMA parameter    { $1.push($3); $$ = $1; }
+    | parameter                         { $$ = [$1]; }
+    ;
+
+parameter
+    : TYPE ID                            { $$ = {type:$1, id:$2,vector:false, simple:false};}
+    | TYPE ID LBRACKET RBRACKET          { $$ = {type:$1, id:$2,vector:true, simple:true};}
+    | TYPE ID LBRACKET RBRACKET LBRACKET RBRACKET  { $$ = {type:$1, id:$2,vector:true, simple:false};}
     ;
