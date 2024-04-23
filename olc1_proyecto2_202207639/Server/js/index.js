@@ -6,7 +6,7 @@ let Errors;
 let Simbols;
 function interpreter(content) {
     try {
-        const result = parser.parse(content);
+        const result = parser.parse(convertOutsideQuotesToLowercase(content));
         console.log(parser.parser.yy.errores);
         result.Execute();
         AST = result.getAst();
@@ -33,6 +33,30 @@ function getErrorHtml() {
 function getSimbolsHtml() {
     console.log(Simbols);
     return Simbols;
+}
+function convertOutsideQuotesToLowercase(input) {
+    let inQuotes = false;
+    let quoteChar = null;
+    let result = '';
+    for (let i = 0; i < input.length; i++) {
+        const char = input[i];
+        if (char === '"' || char === "'") {
+            if (inQuotes) {
+                if (char === quoteChar) {
+                    // Fin de la cita
+                    inQuotes = false;
+                    quoteChar = null;
+                }
+            }
+            else {
+                // Inicio de la cita
+                inQuotes = true;
+                quoteChar = char;
+            }
+        }
+        result += inQuotes ? char : char.toLowerCase();
+    }
+    return result;
 }
 const express = require('express');
 const cors = require('cors');

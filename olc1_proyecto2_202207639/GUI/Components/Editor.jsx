@@ -153,7 +153,7 @@ export function EditorT() {
                         defaultScale={1}
                         defaultPositionX={0}
                         defaultPositionY={0}
-                        maxScale={20}
+                        maxScale={100}
                     >
                         {({zoomIn, zoomOut, resetTransform, ...rest}) => (
                             <React.Fragment>
