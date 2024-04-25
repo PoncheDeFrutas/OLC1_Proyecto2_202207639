@@ -1,0 +1,242 @@
+<program>
+    : <statements> EOF
+
+<statements>
+    : <statements> <statement>
+    | <statement>
+
+<statement>
+    : <functions>
+    | <var_cases>
+    | <vectors>
+    | <increment_decrement> SEMICOLON
+    | <transfer_sentence>
+    | <general_functions>
+    | <execute>
+
+<execute>
+    : EXECUTE <function_value> SEMICOLON
+
+<functions>
+    : <fn_count>
+    | <fn_if>
+    | <fn_while>
+    | <fn_DoWhile>
+    | <fn_Switch>
+    | <fn_for>
+
+<var_cases>
+    : <var_edition> SEMICOLON
+    | <var_declaration> SEMICOLON
+
+<fn_for>
+    : FOR LPAREN <var_cases> <expression> SEMICOLON <actualization> RPAREN <block>
+
+<actualization>
+    : <var_edition>
+    | <increment_decrement>
+
+<var_declaration>
+    : TYPE <var_list> <end_declaration>
+
+<var_list>
+    : <var_list> COMMA ID
+    | ID
+
+<end_declaration>
+    : 
+    | ASSIGN <expression>
+
+<increment_decrement>
+    : ID INC
+    | ID DEC
+
+<var_edition>
+    : ID ASSIGN <expression>
+
+<fn_while>
+    : WHILE LPAREN <expression> RPAREN <block>
+
+<fn_DoWhile>
+    : DO <block> WHILE LPAREN <expression> RPAREN SEMICOLON
+
+<transfer_sentence>
+    : RETURN <expression> SEMICOLON
+    | RETURN  SEMICOLON
+    | BREAK SEMICOLON
+    | CONTINUE SEMICOLON
+
+<fn_count>
+    : COUT INSERTION <expression> <end_count>
+
+<end_count>
+    : SEMICOLON
+    | INSERTION ENDL SEMICOLON
+
+<fn_Switch>
+    : SWITCH LPAREN <expression> RPAREN LBRACE <case_l> <fn_default> RBRACE
+
+<case_l>
+    : <case_list>
+    | 
+
+<case_list>
+    : <case_list> <cases>
+    | <cases>
+
+<cases>
+    : CASE <expression> COLON <statements>
+
+<fn_default>
+    : DEFAULT COLON <statements>
+    | 
+
+<expression>
+    : <operations>
+    | <relational>
+    | <logical>
+    | <ternary>
+    | <casting>
+    | <toLowUp>
+    | <round>
+    | <ToString>
+    | <data_type>
+    | <function_value>
+    | <length>
+    | <typeof>
+    | LPAREN <expression> RPAREN
+
+<C_str>
+    : <expression> DOT C_STR LPAREN RPAREN
+
+<typeof>
+    : TYPEOF LPAREN <expression> RPAREN
+
+<length>
+    : <expression> DOT LENGTH LPAREN RPAREN
+
+<operations>
+    : RES <expression> %prec UMINUS
+    | <expression> SUM <expression>
+    | <expression> RES <expression>
+    | <expression> MUL <expression>
+    | <expression> DIV <expression>
+    | <expression> MOD <expression>
+    | POW LPAREN <expression> COMMA <expression> RPAREN
+
+<relational>
+    : <expression> EQ <expression>
+    | <expression> NEQ <expression>
+    | <expression> LT <expression>
+    | <expression> LEQ <expression>
+    | <expression> GT <expression>
+    | <expression> GEQ <expression>
+
+<logical>
+    : <expression> AND <expression>
+    | <expression> OR <expression>
+    | NOT <expression>
+
+<ternary>
+    : <expression> TERNARY <expression> COLON <expression>
+
+<casting>
+    : LPAREN TYPE RPAREN <expression>
+
+<toLowUp>
+    : TOLOWER LPAREN <expression> RPAREN
+    | TOUPPER LPAREN <expression> RPAREN
+
+<round>
+    : ROUND LPAREN <expression> RPAREN
+
+<ToString>
+    : TOSTRING LPAREN <expression> RPAREN
+
+<data_type>
+    : ID
+    | NUMBER
+    | DOUBLE
+    | BOOL
+    | CHAR
+    | STRING
+    | ID LBRACKET <expression> RBRACKET
+    | ID LBRACKET <expression> RBRACKET LBRACKET <expression> RBRACKET
+
+<fn_if>
+    : IF LPAREN <expression> RPAREN <block> <fn_else>
+
+<fn_else>
+    : ELSE <block>
+    | ELSE <fn_if>
+    | 
+
+<block>
+    : LBRACE <statements> RBRACE
+    | LBRACE RBRACE
+
+<vectors>
+    : <vectors_declaration> SEMICOLON
+    | <vector_modification>
+
+<vectors_declaration>
+    : TYPE ID LBRACKET RBRACKET ASSIGN NEW TYPE LBRACKET <expression> RBRACKET
+    | TYPE ID LBRACKET RBRACKET LBRACKET RBRACKET ASSIGN NEW TYPE LBRACKET <expression> RBRACKET LBRACKET <expression> RBRACKET
+    | TYPE ID LBRACKET RBRACKET ASSIGN <vector_assignation>
+    | TYPE ID LBRACKET RBRACKET LBRACKET RBRACKET ASSIGN LBRACKET <list_value_list> RBRACKET
+
+<vector_modification>
+    : ID LBRACKET <expression> RBRACKET ASSIGN <expression> SEMICOLON
+    | ID LBRACKET <expression> RBRACKET LBRACKET <expression> RBRACKET ASSIGN <expression> SEMICOLON
+
+<vector_assignation>
+    : <C_str>
+    | LBRACKET <value_list> RBRACKET
+
+<list_value_list>
+    : <list_value_list> COMMA LBRACKET <value_list> RBRACKET
+    | LBRACKET <value_list> RBRACKET
+
+<value_list>
+    : <value_list> COMMA <expression>
+    | <expression>
+
+<general_functions>
+    : <function_declaration>
+    | <method_declaration>
+    | <function_value2> SEMICOLON
+
+<function_declaration>
+    : TYPE ID LPAREN <parameter_cases> RPAREN <block>
+
+<method_declaration>
+    : VOID ID LPAREN <parameter_cases> RPAREN <block>
+
+<value_list2>
+    : 
+    | <non_empty_value_list>
+
+<non_empty_value_list>
+    : <non_empty_value_list> COMMA <expression>
+    | <expression>
+
+<function_value>
+    : ID LPAREN <value_list2> RPAREN
+
+<function_value2>
+    : ID LPAREN <value_list2> RPAREN
+
+<parameter_cases>
+    : <parameter_list>
+    | 
+
+<parameter_list>
+    : <parameter_list> COMMA <parameter>
+    | <parameter>
+
+<parameter>
+    : TYPE ID
+    | TYPE ID LBRACKET RBRACKET
+    | TYPE ID LBRACKET RBRACKET LBRACKET RBRACKET
+    ;
+
